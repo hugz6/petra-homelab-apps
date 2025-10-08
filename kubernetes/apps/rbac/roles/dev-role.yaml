@@ -1,0 +1,37 @@
+# Here I define a Role for dev that gets a limited access
+---
+# Role with readonly on certain ressources
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dev-read-only
+rules:
+  - apiGroups: ["", "apps"]
+    resources: ["pods", "services", "deployments", "replicasets"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: [""]
+    resources: ["services/proxy"]
+    verbs: ["get"]
+---
+# Binding for dev
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dev-user-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dev-read-only
+subjects:
+  - kind: ServiceAccount
+    name: dev-user
+    namespace: kube-system

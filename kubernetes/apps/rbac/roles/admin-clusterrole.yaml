@@ -1,0 +1,28 @@
+# Here I define permission for the whole cluster
+# Admin gets full access
+---
+# ClusterRole with full access
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: admin-full-access
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+# Binding for user admin
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user-binding
+# What role
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin-full-access
+# For who
+subjects:
+  - kind: ServiceAccount
+    name: admin-user
+    namespace: kube-system
