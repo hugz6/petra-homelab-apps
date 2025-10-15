@@ -17,7 +17,7 @@ spec:
         releaseName: grafana
       valuesObject:
         admin:
-          existingSecret: grafana-admin-password
+          existingSecret: grafana-web-secret
           userKey: admin-user
           passwordKey: admin-password
 
