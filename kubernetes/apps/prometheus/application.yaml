@@ -9,42 +9,48 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   project: default
-  source:
-    chart: prometheus
-    repoURL: https://prometheus-community.github.io/helm-charts
-    targetRevision: 25.28.0
-    helm:
-      releaseName: prometheus
-      valuesObject:
-        server:
-          persistentVolume:
+  sources:
+    - repoURL: https://prometheus-community.github.io/helm-charts
+      chart: prometheus
+      targetRevision: 25.28.0
+      helm:
+        releaseName: prometheus
+        valuesObject:
+          server:
+            persistentVolume:
+              enabled: true
+              storageClass: longhorn
+              size: 50Gi
+            retention: 30d
+            resources:
+              requests:
+                cpu: 200m
+                memory: 2Gi
+              limits:
+                cpu: 1000m
+                memory: 4Gi
+
+          alertmanager:
             enabled: true
-            storageClass: longhorn
-            size: 50Gi
-          retention: 30d
-          resources:
-            requests:
-              cpu: 200m
-              memory: 2Gi
-            limits:
-              cpu: 1000m
-              memory: 4Gi
+            persistentVolume:
+              enabled: true
+              storageClass: longhorn
+              size: 10Gi
 
-        alertmanager:
-          enabled: true
-          persistentVolume:
+          nodeExporter:
             enabled: true
-            storageClass: longhorn
-            size: 10Gi
 
-        nodeExporter:
-          enabled: true
+          kubeStateMetrics:
+            enabled: true
 
-        kubeStateMetrics:
-          enabled: true
+          pushgateway:
+            enabled: false
 
-        pushgateway:
-          enabled: false
+    - repoURL: https://github.com/hugz6/petra-homelab.git
+      targetRevision: main
+      path: kubernetes/apps/prometheus/ingress
+      directory:
+      recurse: false
 
   destination:
     server: https://kubernetes.default.svc
