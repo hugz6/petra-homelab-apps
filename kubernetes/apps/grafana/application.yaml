@@ -9,12 +9,12 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   project: default
-  source:
-    chart: grafana
-    repoURL: https://grafana.github.io/helm-charts
-    targetRevision: 8.6.2
-    helm:
-      releaseName: grafana
+  sources:
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: grafana
+      targetRevision: 8.6.2
+      helm:
+        releaseName: grafana
       valuesObject:
         admin:
           existingSecret: grafana-admin-password
@@ -76,6 +76,18 @@ spec:
               gnetId: 8588
               revision: 1
               datasource: Prometheus
+
+    - repoURL: https://github.com/hugz6/petra-homelab.git
+      targetRevision: main
+      path: kubernetes/apps/grafana/ingress
+      directory:
+        recurse: false
+
+    - repoURL: https://github.com/hugz6/petra-homelab.git
+      targetRevision: main
+      path: kubernetes/apps/grafana/secret
+      directory:
+        recurse: false
 
   destination:
     server: https://kubernetes.default.svc
