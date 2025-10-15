@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: argocd.petra.lab
+    - host: argocd.petra.ooo
       http:
         paths:
           - path: /
