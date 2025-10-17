@@ -1,107 +1,105 @@
-# variables.tf - Variables pour provider BPG
-
-# Configuration Proxmox
+# Proxmox setup
 variable "proxmox_api_url" {
-  description = "URL de l'API Proxmox (ex: https://proxmox.example.com:8006)"
+  description = "PROXMOX API's URL"
   type        = string
 }
 
 variable "proxmox_api_token_id" {
-  description = "ID du token API Proxmox (ex: terraform-prov@pve!mytoken)"
+  description = "Proxmox token id (ex: terraform-prov@pve!mytoken)"
   type        = string
 }
 
 variable "proxmox_api_token_secret" {
-  description = "Secret du token API Proxmox"
+  description = "Token Secret Proxmox"
   type        = string
   sensitive   = true
 }
 
-# Alternative: authentification par mot de passe
+# Alternative: password auth
 variable "proxmox_username" {
-  description = "Nom d'utilisateur Proxmox (ex: root@pam)"
+  description = "Proxmox username (ex: root@pam)"
   type        = string
   default     = null
 }
 
 variable "proxmox_password" {
-  description = "Mot de passe Proxmox"
+  description = "Proxmox password"
   type        = string
   default     = null
   sensitive   = true
 }
 
 variable "proxmox_nodes" {
-  description = "Liste des nœuds Proxmox disponibles"
+  description = "List of proxmox nodes"
   type        = list(string)
   default     = ["pve-1", "pve-2"]
 }
 
-# Configuration des templates/clones
+# Templates/clones config
 variable "template_name" {
-  description = "Nom du template à cloner (ex: ubuntu-cloud-template)"
+  description = "Template name to clone"
   type        = string
 }
 
 variable "template_vm_id_pve1" {
-  description = "ID du template VM sur pve-1"
+  description = "Template VM id on pve-1"
   type        = number
   default     = 9000
 }
 
 variable "template_vm_id_pve2" {
-  description = "ID du template VM sur pve-2"
+  description = "Template VM id on pve-2"
   type        = number
   default     = 9001
 }
 
-# Configuration des VMs
+# VMs config
 variable "vm_start_id" {
-  description = "ID de départ pour les VMs"
+  description = "Start range ID for VMs"
   type        = number
   default     = 1000
 }
 
 variable "master_count" {
-  description = "Nombre de masters Kubernetes"
+  description = "Number of Kubernetes masters"
   type        = number
   default     = 3
 }
 
 variable "worker_count" {
-  description = "Nombre de workers Kubernetes"
+  description = "Number of Kubernetes workers"
   type        = number
   default     = 3
 }
 
-# Ressources Masters
+# VM Ressources for Masters
 variable "master_cores" {
-  description = "Nombre de cœurs CPU pour les masters"
+  description = "Number of CPU for masters"
   type        = number
   default     = 2
 }
 
 variable "master_memory" {
-  description = "RAM en MB pour les masters"
+  description = "Memory for masters (in Mb)"
   type        = number
   default     = 4096
 }
 
 variable "master_disk_size" {
-  description = "Taille du disque pour les masters (ex: 50G)"
+  description = "Disk size for masters (in Gb)"
   type        = string
   default     = 50
 }
 
-# Ressources Workers
+# VM Ressources for Workers
 variable "worker_cores" {
-  description = "Nombre de cœurs CPU pour les workers"
+  description = "Number of CPU for workers"
   type        = number
   default     = 4
 }
 
 variable "worker_memory" {
-  description = "RAM en MB pour les workers"
+  description = "Memory for workers (in Mb)"
   type        = number
   default     = 8192
 }
@@ -112,61 +110,61 @@ variable "worker_disk_size" {
   default     = 100
 }
 
-# Configuration réseau
+# Network config
 variable "vm_bridge" {
-  description = "Bridge réseau Proxmox"
+  description = "Proxmox's bridge interface"
   type        = string
   default     = "vmbr0"
 }
 
 variable "vlan_id" {
-  description = "ID VLAN (optionnel)"
+  description = "ID VLAN (optionnal)"
   type        = number
   default     = null
 }
 
 variable "network_cidr" {
-  description = "CIDR du réseau (ex: 192.168.1.0/24)"
+  description = "CIDR (ex: 192.168.1.0/24)"
   type        = string
 }
 
 variable "network_gateway" {
-  description = "Passerelle réseau (ex: 192.168.1.1)"
+  description = "Gateway (ex: 192.168.1.1)"
   type        = string
 }
 
 variable "network_dns_servers" {
-  description = "Serveurs DNS"
+  description = "DNS"
   type        = list(string)
   default     = ["8.8.8.8", "8.8.4.4"]
 }
 
 variable "ip_start_index" {
-  description = "Index de départ pour les IPs (ex: 10 pour .10, .11, etc.)"
+  description = "Start range IP (ex: 10 for .10, .11, etc.)"
   type        = number
   default     = 10
 }
 
-# Configuration Cloud-Init
+# Cloud-Init config
 variable "vm_user" {
-  description = "Utilisateur par défaut des VMs"
+  description = "Default user for VMs"
   type        = string
   default     = "ubuntu"
 }
 
 variable "vm_password" {
-  description = "Mot de passe par défaut des VMs"
+  description = "Default password for VMs"
   type        = string
   sensitive   = true
 }
 
 variable "ssh_public_key" {
-  description = "Clé SSH publique pour l'accès aux VMs"
+  description = "SSH Keys for VMs access"
   type        = string
 }
 
 variable "cloud_init_user_data_file_id" {
-  description = "ID du fichier user-data Cloud-Init (optionnel)"
+  description = "user-data file id for Cloud-Init (optional)"
   type        = string
   default     = null
 }

@@ -1,14 +1,6 @@
 # Variables
 KUBESPRAY_DIR=kubespray
 
-# Help: Displays available targets and descriptions
-help:
-	@echo "Available targets:"
-	@echo "  clone-kubespray    - Clone the Kubespray repo if the directory doesn't exist."
-	@echo "  kubespray-launch   - Run the Kubespray deployment."
-	@echo "  kubespray-clean    - Clean up the Kubespray directory."
-	@echo "  kubespray          - Launch kubespray."
-
 .PHONY: clone-kubespray
 clone-kubespray:
 	@if [ -d "$(KUBESPRAY_DIR)" ]; then \

@@ -11,7 +11,6 @@ etcd-ca.crt
 secrets.yaml.dec
 *.dec
 
-# Clés age/GPG privées
 key.txt
 *.age
 *.asc
@@ -19,11 +18,9 @@ id_rsa*
 id_ed25519*
 *.gpg
 
-# Fichiers temporaires de sops
 .sops.yaml.bak
 .decrypted~*
 
-# Tokens et configs Kubernetes
 token
 admin.conf
 kubelet.conf
@@ -32,7 +29,6 @@ scheduler.conf
 bootstrap-kubelet.conf
 kubeadm_certificate_key.creds
 
-# Certificats générés automatiquement
 front-proxy-ca.crt
 front-proxy-ca.key
 front-proxy-client.crt
@@ -42,21 +38,18 @@ etcd/ca.key
 apiserver-etcd-client.crt
 apiserver-etcd-client.key
 
-# Fichiers de build NixOS
 result
 result-*
 .direnv/
 shell.nix
 default.nix.bak
 
-# Logs et données temporaires
 *.log
 *.tmp
 .terraform/
 terraform.tfstate*
 .terraform.lock.hcl
 
-# Fichiers d'éditeur
 .vscode/
 .idea/
 *.swp
@@ -65,20 +58,13 @@ terraform.tfstate*
 .DS_Store
 Thumbs.db
 
-# Fichiers de backup
 *.bak
 *.backup
 *.old
 
-# Hardware configurations spécifiques (optionnel)
-# Décommenter si tu veux exclure les hardware-configuration.nix
-# hosts/*/hardware-configuration.nix
-
-# Fichiers de test
 test-*
 debug-*
 
-# Variables d'environnement
 .env
 .env.local
 .env.*.local
