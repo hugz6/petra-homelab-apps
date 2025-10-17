@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/hugz6/petra-homelab.git
     targetRevision: main
-    path: kubernetes/apps
+    path: kubernetes/infra
     directory:
       recurse: true
       jsonnet: {}

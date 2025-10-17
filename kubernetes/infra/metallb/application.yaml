@@ -16,7 +16,7 @@ spec:
 
     - repoURL: https://github.com/hugz6/petra-homelab.git
       targetRevision: main
-      path: kubernetes/apps/metallb/config
+      path: kubernetes/infra/metallb/config
       directory:
         recurse: false
   destination:
