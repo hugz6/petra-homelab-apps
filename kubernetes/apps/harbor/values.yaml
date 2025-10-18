@@ -1,0 +1,52 @@
+externalURL: http://harbor.petra.ooo
+
+expose:
+  type: ingress
+  ingress:
+    hosts:
+      core: harbor.petra.ooo
+    className: nginx
+  tls:
+    enabled: false
+
+existingSecretAdminPassword: harbor-admin-secrets
+existingSecretAdminPasswordKey: harborAdminPassword
+
+existingSecretSecretKey: harbor-secrets
+
+database:
+  type: internal
+  internal:
+    password: "postgres"
+
+redis:
+  type: internal
+
+trivy:
+  enabled: false
+
+persistence:
+  enabled: true
+  resourcePolicy: keep
+  persistentVolumeClaim:
+    registry:
+      storageClass: longhorn
+      accessMode: ReadWriteOnce
+      size: 10Gi
+    jobservice:
+      jobLog:
+        storageClass: longhorn
+        accessMode: ReadWriteOnce
+        size: 1Gi
+    database:
+      storageClass: longhorn
+      accessMode: ReadWriteOnce
+      size: 5Gi
+    redis:
+      storageClass: longhorn
+      accessMode: ReadWriteOnce
+      size: 1Gi
+    trivy:
+      storageClass: longhorn
+      accessMode: ReadWriteOnce
+      size: 2Gi
