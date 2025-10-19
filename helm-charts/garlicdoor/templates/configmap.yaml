@@ -1,0 +1,86 @@
+# templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "garlicdoor.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "garlicdoor.labels" . | nindent 4 }}
+data:
+  .env: |
+    HOST={{ .Values.app.host | default "0.0.0.0" | quote }}
+    PORT={{ .Values.app.port | default "80" | quote }}
+    CONFIG_WATCH_INTERVALi={{ .Values.app.configWatchInterval | default "10s" | quote }}
+
+  config.yaml: |
+    title: "My Portal"
+    description: "Test"
+    logo: "/static/logo.png"
+
+    sections:
+      - title: "Useful Links"
+        type: "links"
+        items:
+          - name: "Google"
+            url: "https://google.com"
+            description: "Search engine"
+          - name: "GitHub"
+            url: "https://github.com"
+            description: "Source code hosting"
+          - name: "Stack Overflow"
+            url: "https://stackoverflow.com"
+            description: "Developer Q&A"
+          - name: "Google"
+            url: "https://google.com"
+            description: "Search engine"
+          - name: "GitHub"
+            url: "https://github.com"
+            description: "Source code hosting"
+          - name: "Stack Overflow"
+            url: "https://stackoverflow.com"
+            description: "Developer Q&A"
+
+      - title: "Quick Notes"
+        type: "text"
+        content: "This is a simple text block. You can put whatever you want here. It's perfect for quick notes or reminders."
+
+      - title: "Documentation"
+        type: "markdown"
+        content: |
+          ## Welcome to Markdown Support!
+
+          You can now use **markdown** formatting in your portal:
+
+          - **Bold text** and *italic text*
+          - [Links](https://example.com)
+          - `Code snippets`
+          - Lists and more!
+
+          ### Code Example
+          ````go
+                func main() {
+                    fmt.Println("Hello, World!")
+                }
+          ````
+
+          > This is a blockquote. Perfect for highlighting important information!
+
+      - title: "Personal Projects"
+        type: "links"
+        items:
+          - name: "Project Alpha"
+            url: "https://example.com/alpha"
+            description: "My first project"
+          - name: "Project Beta"
+            url: "https://example.com/beta"
+            description: "Work in progress"
+
+      - title: "Weekly Goals"
+        type: "markdown"
+        content: |
+          ### This Week
+          - [x] Complete portal project
+          - [ ] Add more features
+          - [ ] Deploy to production
+
+          **Priority**: High 🔥
