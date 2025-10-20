@@ -4,13 +4,31 @@ app:
   host: 0.0.0.0
   port: 80
 
+config:
+  title: "Petra Homelab"
+  description: "Welcome"
+  logo: "/static/logo.png"
+
+  sections:
+    - title: "Homelab Links"
+      type: "links"
+      items:
+        - name: "ArgoCD"
+          url: "https://argocd.petra.ooo"
+          description: "Gitops infrastructure management"
+        - name: "Proxmox PVE-1"
+          url: "https://pve-1.petra.ooo:8006"
+          description: "Manage datacenter pve-1"
+        - name: "Proxmox PVE-2"
+          url: "https://pve-2.petra.ooo:8006"
+          description: "Manage datacenter pve-2"
+
 image:
   repository: ghcr.io/hugz6/garlicdoor
   pullPolicy: IfNotPresent
   tag: "main-ea0f7f7"
 
 imagePullSecrets: []
-# This is to override the chart name.
 nameOverride: "garlicdoor"
 fullnameOverride: ""
 
