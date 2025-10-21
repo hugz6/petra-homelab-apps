@@ -11,9 +11,12 @@ spec:
       targetRevision: 1.0.0
       helm:
         releaseName: garlicdoor-portal
+        valueFiles:
+          - $values/kubernetes/apps/garlicdoor/values.yaml
     - repoURL: https://github.com/hugz6/petra-homelab.git
       targetRevision: main
       path: kubernetes/apps/garlicdoor/ingress/
+      ref: values
 
   destination:
     server: https://kubernetes.default.svc
