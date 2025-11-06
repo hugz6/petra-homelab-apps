@@ -4,14 +4,12 @@ metadata:
   name: garlicdoor-ingress
   namespace: garlicdoor
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    cloudflare-tunnel-ingress-controller.strrl.dev/backend-protocol: http
+    cloudflare-tunnel-ingress-controller.strrl.dev/proxy-ssl-verify: "off"
 spec:
-  ingressClassName: nginx
+  ingressClassName: cloudflare-tunnel
   rules:
-    - host: garlicdoor.petra.ooo
+    - host: garlicdoor.beutra.fr
       http:
         paths:
           - path: /
