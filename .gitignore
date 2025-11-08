@@ -10,7 +10,7 @@ etcd-ca.key
 etcd-ca.crt
 secrets.yaml.dec
 *.dec
-.secret.yaml
+.secret*.yaml
 
 key.txt
 *.age
