@@ -13,13 +13,11 @@ existingSecret: "minio-secret"
 
 # Persistence is enabled by default.
 persistence:
-  annotations:
-    longhorn.io/number-of-replicas: "1"
   enabled: true
   # Set the size of the persistent volume.
   size: 200Gi
   # If you have a specific storage class, you can specify it here.
-  storageClass: "longhorn"
+  storageClass: "longhorn-single"
 
 # Example of how to create a bucket on startup.
 buckets:
