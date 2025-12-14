@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: https://github.com/hugz6/petra-homelab.git
     targetRevision: main
-    path: kubernetes/infra/argocd/ingress
+    path: kubernetes/infra/argocd-ui/ingress
     directory:
       recurse: false
   destination:
