@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: oci://ghcr.io/hugz6/frp
+    - repoURL: oci://ghcr.io/hugz6/frp/frp
       chart: frp
       targetRevision: 0.1.0
       helm:
