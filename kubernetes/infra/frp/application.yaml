@@ -14,6 +14,7 @@ spec:
         valueFiles:
           - $values/kubernetes/infra/frp/values.yaml
     - repoURL: https://github.com/hugz6/petra-homelab.git
+      path: kubernetes/infra/frp/secrets
       targetRevision: main
       ref: values
 
