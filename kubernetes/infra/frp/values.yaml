@@ -1,0 +1,143 @@
+# Default values for frp.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+# For FRP client, only 1 replica should be running
+replicaCount: 1
+
+# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+image:
+  repository: fatedier/frp
+  # This sets the pull policy for images.
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v0.61.0"
+
+# This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  # Disabled for security - FRP client doesn't need Kubernetes API access
+  automount: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+# This is for setting Kubernetes Labels to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# Resource limits for FRP client
+resources:
+  limits:
+    cpu: 200m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Autoscaling is disabled for FRP client as only 1 replica should run
+autoscaling:
+  enabled: false
+
+# Secret configuration for FRP authentication token
+secret:
+  # Enable or disable Secret creation
+  # Set to false if using existingSecret
+  enabled: false
+  # The authentication token for FRP (only used if enabled=true)
+  token: ""
+  # Annotations to add to the Secret (only used if enabled=true)
+  annotations: {}
+
+  # Use an existing secret instead of creating a new one
+  # If set, secret.enabled and secret.token are ignored
+  existingSecret:
+    # Name of the existing secret
+    name: "frp-secret"
+    # Key in the secret that contains the token
+    key: "token"
+
+# FRP Client Configuration
+frpc:
+  # Server address (FRP server hostname or IP)
+  serverAddr: "beutra.fr"
+  # Server port (default FRP server port)
+  serverPort: 7474
+
+  # Authentication configuration
+  # If secret.enabled is true, token will be read from secret
+  auth:
+    method: "token"
+    token: ""
+
+  # Log configuration
+  log:
+    level: "info"
+    maxDays: 3
+
+  # Nginx Ingress Controller configuration
+  # Adjust namespace and service name if your nginx ingress is deployed differently
+  nginxIngress:
+    namespace: "ingress-nginx"
+    serviceName: "ingress-nginx-controller"
+
+  # Proxies configuration - define your services to expose
+  proxies:
+    # HTTP traffic (port 80) redirected to nginx ingress
+    - name: "http-ingress"
+      type: "tcp"
+      localIP: "ingress-nginx-controller.ingress-nginx.svc.cluster.local"
+      localPort: 80
+      remotePort: 80
+
+    # HTTPS traffic (port 443) redirected to nginx ingress
+    - name: "https-ingress"
+      type: "tcp"
+      localIP: "ingress-nginx-controller.ingress-nginx.svc.cluster.local"
+      localPort: 443
+      remotePort: 443
+
+    # Additional custom proxies can be added below
+    # Example TCP proxy
+    # - name: "ssh"
+    #   type: "tcp"
+    #   localIP: "my-service.default.svc.cluster.local"
+    #   localPort: 22
+    #   remotePort: 6000
+
