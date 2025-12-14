@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "frp.fullname" . }}-config
+  labels:
+    {{- include "frp.labels" . | nindent 4 }}
+data:
+  frpc.toml: |
+    # FRP Client Configuration
+    serverAddr = {{ .Values.frpc.serverAddr | quote }}
+    serverPort = {{ .Values.frpc.serverPort }}
+
+    {{- if or .Values.secret.enabled .Values.secret.existingSecret.name }}
+    # Token will be injected from secret via environment variable
+    auth.method = {{ .Values.frpc.auth.method | quote }}
+    auth.token = "${FRP_TOKEN}"
+    {{- else if .Values.frpc.auth.token }}
+    auth.method = {{ .Values.frpc.auth.method | quote }}
+    auth.token = {{ .Values.frpc.auth.token | quote }}
+    {{- end }}
+
+    {{- if .Values.frpc.log }}
+    # Log configuration
+    log.level = {{ .Values.frpc.log.level | quote }}
+    log.maxDays = {{ .Values.frpc.log.maxDays }}
+    {{- end }}
+
+    {{- range .Values.frpc.proxies }}
+
+    [[proxies]]
+    name = {{ .name | quote }}
+    type = {{ .type | quote }}
+    localIP = {{ .localIP | quote }}
+    localPort = {{ .localPort }}
+    {{- if .customDomains }}
+    customDomains = [{{ range $i, $domain := .customDomains }}{{ if $i }}, {{ end }}{{ $domain | quote }}{{ end }}]
+    {{- end }}
+    {{- if .remotePort }}
+    remotePort = {{ .remotePort }}
+    {{- end }}
+    {{- if .subdomain }}
+    subdomain = {{ .subdomain | quote }}
+    {{- end }}
+    {{- if .secretKey }}
+    secretKey = {{ .secretKey | quote }}
+    {{- end }}
+    {{- end }}
+

@@ -1,0 +1,99 @@
+# Example production values for FRP Client
+# Copy this file to values-prod.yaml and customize for your environment
+
+# Secret configuration - REQUIRED for production
+secret:
+  enabled: true
+  # Replace with your actual FRP authentication token
+  token: "your-secure-token-here"
+  annotations: {}
+
+# FRP Client Configuration
+frpc:
+  # FRP Server address - REQUIRED
+  serverAddr: "frps.yourdomain.com"
+  # FRP Server port
+  serverPort: 7000
+  
+  # Authentication
+  auth:
+    method: "token"
+    # Token is read from secret when secret.enabled=true
+  
+  # Logging
+  log:
+    level: "info"  # Options: trace, debug, info, warn, error
+    maxDays: 7
+  
+  # Define your proxies here
+  proxies:
+    # Example: HTTP proxy for a web application
+    - name: "my-webapp"
+      type: "http"
+      # Service name in Kubernetes (can be FQDN like: service.namespace.svc.cluster.local)
+      localIP: "webapp-service.default.svc.cluster.local"
+      localPort: 80
+      customDomains:
+        - "myapp.example.com"
+        - "www.myapp.example.com"
+    
+    # Example: HTTPS proxy
+    # - name: "my-webapp-https"
+    #   type: "https"
+    #   localIP: "webapp-service.default.svc.cluster.local"
+    #   localPort: 443
+    #   customDomains:
+    #     - "secure.example.com"
+    
+    # Example: TCP proxy (e.g., for SSH, database, etc.)
+    # - name: "my-database"
+    #   type: "tcp"
+    #   localIP: "postgres.database.svc.cluster.local"
+    #   localPort: 5432
+    #   remotePort: 15432  # Port on FRP server
+    
+    # Example: UDP proxy
+    # - name: "my-dns"
+    #   type: "udp"
+    #   localIP: "dns-service.kube-system.svc.cluster.local"
+    #   localPort: 53
+    #   remotePort: 5353
+
+# Resource limits - adjust based on your traffic
+resources:
+  limits:
+    cpu: 500m      # Increase for high traffic
+    memory: 256Mi  # Increase for many connections
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Pod scheduling (optional)
+nodeSelector: {}
+  # kubernetes.io/hostname: specific-node
+
+tolerations: []
+  # - key: "dedicated"
+  #   operator: "Equal"
+  #   value: "frp"
+  #   effect: "NoSchedule"
+
+affinity: {}
+  # nodeAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     nodeSelectorTerms:
+  #     - matchExpressions:
+  #       - key: node-role.kubernetes.io/worker
+  #         operator: In
+  #         values:
+  #         - "true"
+
+# Pod annotations (useful for monitoring, service mesh, etc.)
+podAnnotations: {}
+  # prometheus.io/scrape: "true"
+  # prometheus.io/port: "9090"
+
+podLabels: {}
+  # environment: production
+  # team: platform
+

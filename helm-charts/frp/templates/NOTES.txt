@@ -1,0 +1,58 @@
+🚀 FRP Client has been deployed!
+
+Release Name: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+
+📋 Configuration Summary:
+  - FRP Server: {{ .Values.frpc.serverAddr }}:{{ .Values.frpc.serverPort }}
+  - Authentication: {{ .Values.frpc.auth.method }}
+  {{- if .Values.secret.existingSecret.name }}
+  - Token: ✅ Loaded from existing Secret ({{ .Values.secret.existingSecret.name }})
+  {{- else if .Values.secret.enabled }}
+  - Token: ✅ Loaded from Secret
+  {{- else }}
+  - Token: ⚠️  Using inline token (not recommended for production)
+  {{- end }}
+  - Proxies configured: {{ len .Values.frpc.proxies }}
+
+🔍 Check deployment status:
+  kubectl get deployment {{ include "frp.fullname" . }} -n {{ .Release.Namespace }}
+  kubectl get pods -l app.kubernetes.io/name=frp -n {{ .Release.Namespace }}
+
+📊 View logs:
+  kubectl logs -l app.kubernetes.io/name=frp -n {{ .Release.Namespace }} -f
+
+🔧 Configured Proxies:
+{{- range .Values.frpc.proxies }}
+  - {{ .name }} ({{ .type }})
+    {{- if .customDomains }}
+    Domains: {{ join ", " .customDomains }}
+    {{- end }}
+    {{- if .remotePort }}
+    Remote Port: {{ .remotePort }}
+    {{- end }}
+{{- end }}
+
+{{- if and (not .Values.secret.enabled) (not .Values.secret.existingSecret.name) }}
+
+⚠️  SECURITY WARNING:
+  You are using an inline token in values.yaml.
+  For production, use secret-based authentication:
+
+  Option 1 - Create a new secret:
+  helm upgrade {{ .Release.Name }} . \
+    --set secret.enabled=true \
+    --set secret.token="your-secure-token"
+
+  Option 2 - Use an existing secret:
+  helm upgrade {{ .Release.Name }} . \
+    --set secret.existingSecret.name="my-secret" \
+    --set secret.existingSecret.key="token"
+{{- end }}
+
+📚 Documentation:
+  - FRP: https://github.com/fatedier/frp
+  - Chart README: See README.md in the chart directory
+
+✅ Your FRP client should now be connecting to {{ .Values.frpc.serverAddr }}
+
