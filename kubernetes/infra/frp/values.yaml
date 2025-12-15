@@ -96,7 +96,7 @@ secret:
 # FRP Client Configuration
 frpc:
   # Server address (FRP server hostname or IP)
-  serverAddr: "beutra.fr"
+  serverAddr: "217.160.252.108"
   # Server port (default FRP server port)
   serverPort: 7474
 
