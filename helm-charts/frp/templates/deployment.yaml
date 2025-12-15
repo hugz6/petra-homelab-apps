@@ -40,11 +40,15 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["frpc"]
+          {{- if or .Values.secret.enabled .Values.secret.existingSecret.name }}
+          command: ["/bin/sh"]
           args:
             - "-c"
-            - "/etc/frp/frpc.toml"
-          {{- if or .Values.secret.enabled .Values.secret.existingSecret.name }}
+            - |
+              # Replace ${FRP_TOKEN} with actual token value in config file
+              sed "s/\${FRP_TOKEN}/$FRP_TOKEN/g" /etc/frp/frpc.toml > /tmp/frpc.toml
+              # Start frpc with the processed config
+              exec frpc -c /tmp/frpc.toml
           env:
             - name: FRP_TOKEN
               valueFrom:
@@ -56,6 +60,11 @@ spec:
                   name: {{ include "frp.fullname" . }}-token
                   key: token
                   {{- end }}
+          {{- else }}
+          command: ["frpc"]
+          args:
+            - "-c"
+            - "/etc/frp/frpc.toml"
           {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
@@ -73,6 +82,10 @@ spec:
             - name: config
               mountPath: /etc/frp
               readOnly: true
+            {{- if or .Values.secret.enabled .Values.secret.existingSecret.name }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -80,6 +93,10 @@ spec:
         - name: config
           configMap:
             name: {{ include "frp.fullname" . }}-config
+        {{- if or .Values.secret.enabled .Values.secret.existingSecret.name }}
+        - name: tmp
+          emptyDir: {}
+        {{- end }}
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
