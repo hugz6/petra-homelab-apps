@@ -1,0 +1,51 @@
+---
+authentik:
+  log_level: info
+  
+  resources:
+    server:
+      requests:
+        memory: 300Mi
+      limits:
+        memory: 600Mi
+    worker:
+      requests:
+        memory: 200Mi
+      limits:
+        memory: 500Mi
+
+server:
+  envFrom:
+    - secretRef:
+        name: authentik-secrets
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - auth.beutra.fr
+    tls:
+      - secretName: authentik-tls
+        hosts:
+          - auth.beutra.fr
+
+worker:
+  envFrom:
+    - secretRef:
+        name: authentik-secrets
+
+postgresql:
+  enabled: true
+  auth:
+    existingSecret: "authentik-secrets" 
+    secretKeys:
+      adminPasswordKey: "AUTHENTIK_POSTGRESQL__PASSWORD"
+      userPasswordKey: "AUTHENTIK_POSTGRESQL__PASSWORD"
+  primary:
+    persistence:
+      enabled: true
+      size: 5Gi
+
+redis:
+  enabled: true
+  auth:
+    enabled: false
