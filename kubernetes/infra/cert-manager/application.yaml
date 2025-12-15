@@ -5,14 +5,17 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    chart: cert-manager
-    repoURL: https://charts.jetstack.io
-    targetRevision: v1.19.2
-    helm:
-      parameters:
-        - name: installCRDs
-          value: "true"
+  sources:
+    - chart: cert-manager
+      repoURL: https://charts.jetstack.io
+      targetRevision: v1.19.2
+      helm:
+        parameters:
+          - name: installCRDs
+            value: "true"
+    - repoURL: https://github.com/hugz6/petra-homelab.git
+      targetRevision: HEAD
+      path: kubernetes/infra/cert-manager
   destination:
     server: https://kubernetes.default.svc
     namespace: cert-manager
