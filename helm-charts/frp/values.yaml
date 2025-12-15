@@ -8,11 +8,11 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: fatedier/frp
+  repository: fatedier/frpc
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.61.0"
+  tag: "v0.65.0"
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -89,14 +89,14 @@ secret:
   # If set, secret.enabled and secret.token are ignored
   existingSecret:
     # Name of the existing secret
-    name: ""
+    name: "frp-secret"
     # Key in the secret that contains the token
     key: "token"
 
 # FRP Client Configuration
 frpc:
   # Server address (FRP server hostname or IP)
-  serverAddr: "frps.example.com"
+  serverAddr: "beutra.fr"
   # Server port (default FRP server port)
   serverPort: 7000
 
@@ -119,24 +119,20 @@ frpc:
 
   # Proxies configuration - define your services to expose
   proxies:
-    # HTTP traffic (port 80) redirected to nginx ingress
+    # Uses vhostHTTPPort (80) configured on FRP server
     - name: "http-ingress"
-      type: "tcp"
+      type: "http"
       localIP: "ingress-nginx-controller.ingress-nginx.svc.cluster.local"
       localPort: 80
-      remotePort: 80
+      customDomains:
+        - "*.beutra.fr"
+        - "beutra.fr"
 
-    # HTTPS traffic (port 443) redirected to nginx ingress
+    # Uses vhostHTTPSPort (443) configured on FRP server
     - name: "https-ingress"
-      type: "tcp"
+      type: "https"
       localIP: "ingress-nginx-controller.ingress-nginx.svc.cluster.local"
       localPort: 443
-      remotePort: 443
-
-    # Additional custom proxies can be added below
-    # Example TCP proxy
-    # - name: "ssh"
-    #   type: "tcp"
-    #   localIP: "my-service.default.svc.cluster.local"
-    #   localPort: 22
-    #   remotePort: 6000
+      customDomains:
+        - "*.beutra.fr"
+        - "beutra.fr"
