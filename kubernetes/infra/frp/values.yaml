@@ -8,7 +8,7 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: ghcr.io/fatedier/frpc
+  repository: fatedier/frpc
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
@@ -96,7 +96,7 @@ secret:
 # FRP Client Configuration
 frpc:
   # Server address (FRP server hostname or IP)
-  serverAddr: "217.160.252.108"
+  serverAddr: "beutra.fr"
   # Server port (default FRP server port)
   serverPort: 7474
 
@@ -108,7 +108,7 @@ frpc:
 
   # Log configuration
   log:
-    level: "debug"
+    level: "info"
     maxDays: 3
 
   # Nginx Ingress Controller configuration
@@ -119,25 +119,20 @@ frpc:
 
   # Proxies configuration - define your services to expose
   proxies:
-    # HTTP traffic (port 80) redirected to nginx ingress
+    # Uses vhostHTTPPort (80) configured on FRP server
     - name: "http-ingress"
-      type: "tcp"
+      type: "http"
       localIP: "ingress-nginx-controller.ingress-nginx.svc.cluster.local"
       localPort: 80
-      remotePort: 80
+      customDomains:
+        - "*.beutra.fr"
+        - "beutra.fr"
 
-    # HTTPS traffic (port 443) redirected to nginx ingress
+    # Uses vhostHTTPSPort (443) configured on FRP server
     - name: "https-ingress"
-      type: "tcp"
+      type: "https"
       localIP: "ingress-nginx-controller.ingress-nginx.svc.cluster.local"
       localPort: 443
-      remotePort: 443
-
-    # Additional custom proxies can be added below
-    # Example TCP proxy
-    # - name: "ssh"
-    #   type: "tcp"
-    #   localIP: "my-service.default.svc.cluster.local"
-    #   localPort: 22
-    #   remotePort: 6000
-
+      customDomains:
+        - "*.beutra.fr"
+        - "beutra.fr"
