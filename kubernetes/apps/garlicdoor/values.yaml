@@ -1,0 +1,23 @@
+config:
+  title: "Petra Homelab"
+  description: "Welcome"
+  logo: "/static/logo.png"
+
+  sections:
+    - title: "Shortcuts"
+      type: "links"
+      items:
+        - name: "My GitHub"
+          url: https://github.com/hugz6
+          description: "Access to my GH"
+
+image:
+  repository: ghcr.io/hugz6/garlicdoor
+  pullPolicy: IfNotPresent
+  tag: "0.1.0"
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 80
