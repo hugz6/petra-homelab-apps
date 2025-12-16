@@ -47,6 +47,9 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
     hosts:
       - auth.beutra.fr
     tls:
