@@ -32,12 +32,7 @@ spec:
             serviceMonitor:
               enabled: false
           admissionWebhooks:
-            enabled: true
-            annotations:
-              admissions.enforcer/disabled: "true"
-            patch:
-              enabled: true
-            failurePolicy: Ignore
+            enabled: false
           defaultBackend:
             enabled: false
   destination:
