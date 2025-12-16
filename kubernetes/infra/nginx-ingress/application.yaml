@@ -33,6 +33,11 @@ spec:
               enabled: false
           admissionWebhooks:
             enabled: true
+            annotations:
+              admissions.enforcer/disabled: "true"
+            patch:
+              enabled: true
+            failurePolicy: Ignore
           defaultBackend:
             enabled: false
   destination:
