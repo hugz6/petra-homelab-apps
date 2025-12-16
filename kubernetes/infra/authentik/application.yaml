@@ -18,6 +18,9 @@ spec:
     - repoURL: https://github.com/hugz6/petra-homelab.git
       targetRevision: main
       path: kubernetes/infra/authentik/secrets
+    - repoURL: https://github.com/hugz6/petra-homelab.git
+      targetRevision: main
+      path: kubernetes/infra/authentik/postgres
   destination:
     server: https://kubernetes.default.svc
     namespace: authentik
