@@ -23,6 +23,7 @@ spec:
             default: true
           allowSnippetAnnotations: true
           config:
+            allow-snippet-annotations: "true"
             use-forwarded-headers: "true"
             compute-full-forwarded-for: "true"
             use-proxy-protocol: "false"
