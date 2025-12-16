@@ -18,6 +18,32 @@ server:
   envFrom:
     - secretRef:
         name: authentik-secrets
+  env:
+    - name: AUTHENTIK_POSTGRESQL__HOST
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-app
+          key: host
+    - name: AUTHENTIK_POSTGRESQL__NAME
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-app
+          key: dbname
+    - name: AUTHENTIK_POSTGRESQL__USER
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-app
+          key: username
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-app
+          key: password
+    - name: AUTHENTIK_POSTGRESQL__PORT
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-app
+          key: port
   ingress:
     enabled: true
     ingressClassName: nginx
@@ -32,20 +58,32 @@ worker:
   envFrom:
     - secretRef:
         name: authentik-secrets
+  env:
+    - name: AUTHENTIK_POSTGRESQL__HOST
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-app
+          key: host
+    - name: AUTHENTIK_POSTGRESQL__NAME
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-app
+          key: dbname
+    - name: AUTHENTIK_POSTGRESQL__USER
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-app
+          key: username
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-app
+          key: password
+    - name: AUTHENTIK_POSTGRESQL__PORT
+      valueFrom:
+        secretKeyRef:
+          name: authentik-pg-app
+          key: port
 
 postgresql:
-  enabled: true
-  auth:
-    existingSecret: "authentik-secrets" 
-    secretKeys:
-      adminPasswordKey: "AUTHENTIK_POSTGRESQL__PASSWORD"
-      userPasswordKey: "AUTHENTIK_POSTGRESQL__PASSWORD"
-  primary:
-    persistence:
-      enabled: true
-      size: 5Gi
-
-redis:
-  enabled: true
-  auth:
-    enabled: false
+  enabled: false
