@@ -1,0 +1,148 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "2" # After MetalLB
+spec:
+  project: default
+  source:
+    chart: traefik
+    repoURL: https://traefik.github.io/charts
+    targetRevision: 32.1.1
+    helm:
+      releaseName: traefik
+      valuesObject:
+        # Global options
+        globalArguments:
+          - "--global.checknewversion"
+          - "--global.sendanonymoususage=false"
+        
+        # Additional arguments for Traefik
+        additionalArguments:
+          - "--log.level=INFO"
+          - "--accesslog=true"
+          - "--api.dashboard=true"
+          - "--ping=true"
+          - "--metrics.prometheus=true"
+          - "--entrypoints.web.address=:80"
+          - "--entrypoints.websecure.address=:443"
+          - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+          - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+          - "--providers.kubernetescrd"
+          - "--providers.kubernetesingress"
+          - "--providers.kubernetesingress.ingressclass=traefik"
+        
+        # Deployment configuration
+        deployment:
+          enabled: true
+          kind: Deployment
+          replicas: 1
+        
+        # Service configuration
+        service:
+          enabled: true
+          type: ClusterIP
+          annotations: {}
+        
+        # Ports configuration
+        ports:
+          web:
+            port: 80
+            expose:
+              default: true
+            exposedPort: 80
+            protocol: TCP
+          websecure:
+            port: 443
+            expose:
+              default: true
+            exposedPort: 443
+            protocol: TCP
+            tls:
+              enabled: true
+          metrics:
+            port: 9100
+            expose:
+              default: false
+            exposedPort: 9100
+            protocol: TCP
+        
+        # IngressClass configuration
+        ingressClass:
+          enabled: true
+          isDefaultClass: true
+          name: traefik
+        
+        # IngressRoute for dashboard (optional)
+        ingressRoute:
+          dashboard:
+            enabled: false
+        
+        # Providers
+        providers:
+          kubernetesCRD:
+            enabled: true
+            allowCrossNamespace: true
+            allowExternalNameServices: true
+          kubernetesIngress:
+            enabled: true
+            allowExternalNameServices: true
+            publishedService:
+              enabled: true
+        
+        # Logs
+        logs:
+          general:
+            level: INFO
+          access:
+            enabled: true
+        
+        # Metrics
+        metrics:
+          prometheus:
+            enabled: true
+            addEntryPointsLabels: true
+            addRoutersLabels: true
+            addServicesLabels: true
+        
+        # Resources
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        
+        # Security context
+        securityContext:
+          capabilities:
+            drop: [ALL]
+          readOnlyRootFilesystem: true
+          runAsGroup: 65532
+          runAsNonRoot: true
+          runAsUser: 65532
+        
+        podSecurityContext:
+          fsGroup: 65532
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: traefik
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        maxDuration: 3m
+
