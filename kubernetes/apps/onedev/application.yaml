@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: onedev
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://code.onedev.io/onedev/~helm
+      chart: onedev
+      targetRevision: 14.0.4
+      helm:
+        releaseName: onedev
+        valueFiles:
+          - $values/kubernetes/apps/onedev/values.yaml
+    - repoURL: https://github.com/hugz6/petra-homelab.git
+      targetRevision: main
+      path: kubernetes/apps/onedev/resources
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: onedev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,14 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: onedev-db
+  namespace: onedev
+spec:
+  instances: 3
+  bootstrap:
+    initdb:
+      database: onedev
+      owner: onedev
+  storage:
+    size: 5Gi
+    storageClass: longhorn-single

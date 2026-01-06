@@ -1,0 +1,101 @@
+# Global values
+global:
+  # global.nameOverride -- Override the name of the app.
+  nameOverride: ""
+  # global.fullnameOverride -- Override the fully qualified app name.
+  fullnameOverride: ""
+  # global.commonLabels -- To apply labels to all resources.
+  commonLabels: {}
+    # dept_name: platform
+
+onedev:
+  # onedev.replicas -- Number of OneDev servers to run. With an enterprise license, you will be able to distribute
+  # different projects to different servers for horizontal scaling, as well as replicate project repositories and
+  # artifacts for high availability. Note that setting this param to 2 or more is only meaningful if you are
+  # connecting to external database; otherwise they simply run as independent OneDev instances
+  replicas: 1
+  # onedev.updateStrategy -- Valid options: `RollingUpdate`, `OnDelete`
+  updateStrategy:
+    type: RollingUpdate
+  trustCerts:
+    # onedev.trustCerts.secretName -- Name of an existing secret containing trusted certificates. You may create the
+    # secret with "kubectl create secret generic onedev-trustcerts -n onedev --from-file=/path/to/trust-certs",
+    # where /path/to/trust-certs is a local directory contains all certificates to be trusted. Certificate should be 
+    # of base64 encoded PEM format beginning with "-----BEGIN CERTIFICATE-----" and ending with "-----END CERTIFICATE-----"
+    secretName: "onedev-trustcerts"
+  jvm:
+    maxMemoryPercent: "50"
+    threadStackSize: "1024k"
+  hibernate:
+    queryPlanCacheMaxSize: "2048"
+    queryPlanParameterMetadataMaxSize: "128"
+  # Specify OneDev Server initial settings to avoid manual setup
+  initSettings:
+    # onedev.initSettings.user -- Administrator username. Leave empty to prompt
+    user: ""
+    # onedev.initSettings.password -- Administrator Password. Leave empty to prompt
+    password: ""
+    # onedev.initSettings.email -- Administrator Email address. Leave empty to prompt
+    email: ""
+    # onedev.initSettings.serverUrl -- Server url. Leave empty to prompt. Will be ignored if ingress.host is specified
+    serverUrl: ""
+    # onedev.initSettings.sshRootUrl -- Root url to clone repository via SSH. Leave empty to derive from server url
+    sshRootUrl: ""
+
+# External database configuration
+database:
+  # database.external -- Set to **true** when using external database
+  external: true
+  # database.type-- Required: Set type of external database. Possible values `mysql`, `mariadb`, `postgresql`, `mssql`
+  # [external databases](https://docs.onedev.io/installation-guide/run-as-docker-container#use-external-database)
+  type: "postgresql"
+  # database.host -- IP address or hostname of database
+  host: "onedev-db-rw"
+  # database.port --  Port Number
+  port: "5432"
+  # database.name --  Name of the database
+  name: "onedev"
+  # database.user --  User with access to database
+  user: "onedev"
+  # database.password -- Database password 
+  password: "dummy"
+  # database.maximumPoolSize -- Database maximum pool size
+  maximumPoolSize: "25"
+
+serviceAccount:
+  # serviceAccount.create -- If **true**, create a ServiceAccount.
+  create: true
+  # serviceAccount.name -- Specify a pre-existing ServiceAccount to use if `serviceAccount.create` is **false**.
+  name: onedev
+  # serviceAccount.annotations -- Annotations to add to the ServiceAccount, if `serviceAccount.create` is **true**.
+  annotations: {}
+
+# env -- Define additional environment variables.
+env:
+  - name: hibernate_connection_username
+    valueFrom:
+      secretKeyRef:
+        name: onedev-db-app
+        key: username
+  - name: hibernate_connection_password
+    valueFrom:
+      secretKeyRef:
+        name: onedev-db-app
+        key: password
+
+# resources -- Specify resource requests and limits.
+resources:
+  requests:
+    cpu: 1000m
+    memory: 5Gi
+  limits:
+    cpu: 1500m
+    memory: 8Gi
+
+persistence:
+  # persistence.storageClassName -- (string) Specify the storageClassName for PersistentVolumeClaims.
+  storageClassName: "longhorn"
+  # persistence.accessModes -- Specify the accessModes for PersistentVolumeClaims.
+  accessModes: "ReadWriteOnce"
+  # persistence.size -- Specify the size of PersistentVolumeClaims.
+  size: 500Gi
