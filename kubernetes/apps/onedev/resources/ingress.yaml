@@ -21,6 +21,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: onedev-onedev
+                name: onedev
                 port:
-                  number: 6610
+                  number: 80
