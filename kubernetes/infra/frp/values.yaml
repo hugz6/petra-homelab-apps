@@ -111,18 +111,18 @@ frpc:
     level: "info"
     maxDays: 3
 
-  # Nginx Ingress Controller configuration
-  # Adjust namespace and service name if your nginx ingress is deployed differently
-  nginxIngress:
-    namespace: "ingress-nginx"
-    serviceName: "ingress-nginx-controller"
+  # Traefik Ingress Controller configuration
+  # Adjust namespace and service name if your ingress is deployed differently
+  traefikIngress:
+    namespace: "traefik"
+    serviceName: "traefik"
 
   # Proxies configuration - define your services to expose
   proxies:
     # Uses vhostHTTPPort (80) configured on FRP server
     - name: "http-ingress"
       type: "http"
-      localIP: "ingress-nginx-controller.ingress-nginx.svc.cluster.local"
+      localIP: "traefik.traefik.svc.cluster.local"
       localPort: 80
       customDomains:
         - "*.beutra.fr"
@@ -131,7 +131,7 @@ frpc:
     # Uses vhostHTTPSPort (443) configured on FRP server
     - name: "https-ingress"
       type: "https"
-      localIP: "ingress-nginx-controller.ingress-nginx.svc.cluster.local"
+      localIP: "traefik.traefik.svc.cluster.local"
       localPort: 443
       customDomains:
         - "*.beutra.fr"
