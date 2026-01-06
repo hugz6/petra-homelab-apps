@@ -45,7 +45,7 @@ onedev:
 # External database configuration
 database:
   # database.external -- Set to **true** when using external database
-  external: true
+  external: false
   # database.type-- Required: Set type of external database. Possible values `mysql`, `mariadb`, `postgresql`, `mssql`
   # [external databases](https://docs.onedev.io/installation-guide/run-as-docker-container#use-external-database)
   type: "postgresql"
@@ -72,6 +72,14 @@ serviceAccount:
 
 # env -- Define additional environment variables.
 env:
+  - name: hibernate_dialect
+    value: "io.onedev.server.persistence.PostgreSQLDialect"
+  - name: hibernate_connection_driver_class
+    value: "org.postgresql.Driver"
+  - name: hibernate_connection_url
+    value: "jdbc:postgresql://onedev-db-rw:5432/onedev"
+  - name: hibernate_hikari_maximumPoolSize
+    value: "25"
   - name: hibernate_connection_username
     valueFrom:
       secretKeyRef:
