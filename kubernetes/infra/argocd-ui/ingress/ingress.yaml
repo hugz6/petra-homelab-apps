@@ -4,12 +4,17 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   ingressClassName: traefik
+  tls:
+    - hosts:
+        - argocd.beutra.fr
+      secretName: argocd-tls
   rules:
-    - host: argocd.petra.ooo
+    - host: argocd.beutra.fr
       http:
         paths:
           - path: /
