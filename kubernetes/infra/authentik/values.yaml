@@ -19,7 +19,7 @@ serviceAccount:
   name: "authentik"
 
 server:
-  serviceAccount: "authentik"
+  serviceAccountName: "authentik"
   envFrom:
     - secretRef:
         name: authentik-secrets
