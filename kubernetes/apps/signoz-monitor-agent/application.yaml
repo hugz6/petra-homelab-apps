@@ -11,7 +11,7 @@ spec:
       chart: k8s-infra
       helm:
         valueFiles:
-          - $values/kubernetes/apps/signoz/values.yaml
+          - $values/kubernetes/apps/signoz-monitor-agent/values.yaml
     - repoURL: https://github.com/hugz6/petra-homelab.git
       targetRevision: main
       ref: values
