@@ -1,1 +1,15 @@
-otelCollectorEndpoint: http://signoz-otel-collector.signoz.svc.cluster.local:4317
+global:
+  clusterName: petra-homelab
+  otelCollectorEndpoint: http://signoz-otel-collector.signoz.svc.cluster.local:4317
+
+presets:
+  logsCollection:
+    enabled: true
+  hostMetrics:
+    enabled: true
+  kubeletMetrics:
+    enabled: true
+  kubernetesAttributes:
+    enabled: true
+  otlpExporter:
+    enabled: true
