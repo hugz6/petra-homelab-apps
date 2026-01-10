@@ -141,4 +141,4 @@ frpc:
       type: "tcp"
       remotePort: 2222
       localIP: "onedev.onedev.svc.cluster.local"
-      localPort: 6611
+      localPort: 22
