@@ -1,11 +1,6 @@
 signoz:
   name: "signoz"
   replicaCount: 1
-  image:
-    registry: docker.io
-    repository: signoz/signoz
-    tag: v0.81.0
-    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 8080

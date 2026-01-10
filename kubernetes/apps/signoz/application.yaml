@@ -7,7 +7,7 @@ spec:
   project: default
   sources:
     - repoURL: https://charts.signoz.io
-      targetRevision: 0.79.0
+      targetRevision: 0.106.0
       chart: signoz
       helm:
         valueFiles:
