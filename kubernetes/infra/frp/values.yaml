@@ -136,3 +136,9 @@ frpc:
       customDomains:
         - "*.beutra.fr"
         - "beutra.fr"
+
+    - name: "ssh-onedev"
+      type: "tcp"
+      remotePort: 2222
+      localIP: "onedev.onedev.svc.cluster.local"
+      localPort: 6611
