@@ -31,6 +31,7 @@ spec:
           - "--providers.kubernetescrd"
           - "--providers.kubernetesingress"
           - "--providers.kubernetesingress.ingressclass=traefik"
+          - "--providers.kubernetesingress.ingressendpoint.ip=127.0.0.1" # Fix ingress always in progressing
 
         # Deployment configuration
         deployment:
