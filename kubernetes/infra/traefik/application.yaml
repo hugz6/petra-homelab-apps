@@ -91,7 +91,7 @@ spec:
             enabled: true
             allowExternalNameServices: true
             publishedService:
-              enabled: true
+              enabled: false
         
         # Logs
         logs:
