@@ -21,6 +21,11 @@ persistence:
     - ReadWriteOnce
 
 gitea:
+  config:
+    service:
+      REQUIRE_SIGNIN_VIEW: true
+    server:
+      SSH_PORT: 22222
   database:
     type: postgres
     host: forgejo-db-rw.forgejo.svc.cluster.local:5432
@@ -38,4 +43,4 @@ extraEnv:
 service:
   ssh:
     type: ClusterIP
-    port: 22
+    port: 22222
