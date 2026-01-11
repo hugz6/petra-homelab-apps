@@ -1,9 +1,47 @@
 config:
   title: "Petra Homelab"
-  description: "Welcome"
+  description: "Welcome to Petra's Homelab"
   logo: "/static/logo.png"
 
   sections:
+    - title: "Services - DevOps"
+      type: "links"
+      items:
+        - name: "Onedev - Git"
+          url: https://onedev.beutra.fr
+          description: "Access to Onedev DevOps Platform"
+        - name: "Forgejo - Git"
+          url: https://onedev.beutra.fr
+          description: "Access to Forgejo Git Server"
+
+    - title: "Services - Monitoring"
+      type: "links"
+      items:
+        - name: "Openobserve"
+          url: https://openobserve.beutra.fr
+          description: "Access to Openobserve Monitoring"
+        - name: "Prometheus"
+          url: https://prometheus.beutra.fr
+          description: "Access to Prometheus Monitoring"
+        - name: "Grafana"
+          url: https://grafana.beutra.fr
+          description: "Access to Grafana Dashboard"
+
+    - title: "Services - Other"
+      type: "links"
+      items:
+        - name: "MinIO S3"
+          url: https://minio.beutra.fr
+          description: "Access to Onedev DevOps Platform"
+
+    - title: "Services - Admin"
+      type: "links"
+      items:
+        - name: "Authentik - SSO"
+          url: https://auth.beutra.fr
+          description: "Access to Petra-Homelab SSO"
+        
+
     - title: "Shortcuts"
       type: "links"
       items:
