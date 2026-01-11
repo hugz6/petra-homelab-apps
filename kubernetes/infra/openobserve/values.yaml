@@ -1,0 +1,17 @@
+config:
+  ZO_LOCAL_MODE: "true"
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: openobserve.beutra.fr
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: openobserve-tls
+      hosts:
+        - openobserve.beutra.fr
