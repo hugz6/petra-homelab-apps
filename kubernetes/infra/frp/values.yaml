@@ -142,3 +142,9 @@ frpc:
       remotePort: 2222
       localIP: "onedev.onedev.svc.cluster.local"
       localPort: 22
+
+    - name: "ssh-forgejo"
+      type: "tcp"
+      remotePort: 22222
+      localIP: "forgejo-ssh.forgejo.svc.cluster.local"
+      localPort: 22222
