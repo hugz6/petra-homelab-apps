@@ -13,6 +13,9 @@ ingress:
       hosts:
         - forgejo.beutra.fr
 
+strategy:
+  type: Recreate
+
 persistence:
   enabled: true
   size: 10Gi
