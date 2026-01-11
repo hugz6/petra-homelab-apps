@@ -1,0 +1,41 @@
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: forgejo.beutra.fr
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: forgejo-tls
+      hosts:
+        - forgejo.beutra.fr
+
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClass: longhorn-single
+  accessModes:
+    - ReadWriteOnce
+
+gitea:
+  database:
+    type: postgres
+    host: forgejo-db-rw.forgejo.svc.cluster.local:5432
+    name: forgejo
+    user: forgejo
+    # Password provided via extraEnv
+
+extraEnv:
+  - name: GITEA__database__PASSWD
+    valueFrom:
+      secretKeyRef:
+        name: forgejo-db-app
+        key: password
+
+service:
+  ssh:
+    type: ClusterIP
+    port: 22
