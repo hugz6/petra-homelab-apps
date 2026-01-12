@@ -5,6 +5,10 @@ grafana:
   ingress:
     enabled: false
 
+defaultDashboards:
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+    
 vmsingle:
   spec:
     retentionPeriod: "30d"
