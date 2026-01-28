@@ -12,10 +12,10 @@ spec:
       helm:
         releaseName: victoriametrics
         valueFiles:
-          - $values/kubernetes/infra/victoriametrics/values.yaml
-    - repoURL: https://github.com/hugz6/petra-homelab.git
+          - $values/argocd/infra/victoriametrics/values.yaml
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
-      path: kubernetes/infra/victoriametrics/resources
+      path: argocd/infra/victoriametrics/resources
       ref: values
   destination:
     server: https://kubernetes.default.svc

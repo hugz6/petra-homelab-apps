@@ -13,9 +13,9 @@ spec:
         parameters:
           - name: installCRDs
             value: "true"
-    - repoURL: https://github.com/hugz6/petra-homelab.git
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: HEAD
-      path: kubernetes/infra/cert-manager
+      path: argocd/infra/cert-manager
   destination:
     server: https://kubernetes.default.svc
     namespace: cert-manager

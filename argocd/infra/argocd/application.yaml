@@ -11,9 +11,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/hugz6/petra-homelab.git
+    repoURL: https://github.com/hugz6/petra-homelab-apps.git
     targetRevision: main
-    path: kubernetes/infra/argocd-ui/resources
+    path: argocd/infra/argocd-ui/resources
     directory:
       recurse: false
   destination:

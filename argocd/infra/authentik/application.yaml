@@ -11,16 +11,16 @@ spec:
       targetRevision: 2025.10.3
       helm:
         valueFiles:
-          - $values/kubernetes/infra/authentik/values.yaml
-    - repoURL: https://github.com/hugz6/petra-homelab.git
+          - $values/argocd/infra/authentik/values.yaml
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
       ref: values
-    - repoURL: https://github.com/hugz6/petra-homelab.git
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
-      path: kubernetes/infra/authentik/secrets
-    - repoURL: https://github.com/hugz6/petra-homelab.git
+      path: argocd/infra/authentik/secrets
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
-      path: kubernetes/infra/authentik/postgres
+      path: argocd/infra/authentik/postgres
   destination:
     server: https://kubernetes.default.svc
     namespace: authentik

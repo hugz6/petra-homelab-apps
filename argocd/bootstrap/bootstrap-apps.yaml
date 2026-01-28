@@ -9,9 +9,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/hugz6/petra-homelab.git
+    repoURL: https://github.com/hugz6/petra-homelab-apps.git
     targetRevision: main
-    path: kubernetes/apps
+    path: argocd/apps
     directory:
       recurse: true
       jsonnet: {}

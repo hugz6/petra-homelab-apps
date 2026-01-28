@@ -12,10 +12,10 @@ spec:
       helm:
         releaseName: onedev
         valueFiles:
-          - $values/kubernetes/apps/onedev/values.yaml
-    - repoURL: https://github.com/hugz6/petra-homelab.git
+          - $values/argocd/apps/onedev/values.yaml
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
-      path: kubernetes/apps/onedev/resources
+      path: argocd/apps/onedev/resources
       ref: values
   destination:
     server: https://kubernetes.default.svc
