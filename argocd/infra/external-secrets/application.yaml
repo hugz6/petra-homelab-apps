@@ -16,7 +16,7 @@ spec:
           - $values/argocd/infra/external-secrets/values.yaml
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
-      path: argocd/infra/external-secrets/resources
+      path: argocd/infra/external-secrets
       ref: values
   destination:
     server: https://kubernetes.default.svc
@@ -27,4 +27,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-
+      - ServerSideApply=true
