@@ -8,6 +8,12 @@ ingress:
     enabled: true
     secret: authelia-tls
 
+pod:
+  kind: Deployment
+  replicas: 1
+  strategy:
+    type: Recreate
+
 configMap:
   theme: light
   default_2fa_method: totp
