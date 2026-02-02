@@ -16,6 +16,9 @@ spec:
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
       ref: values
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      path: argocd/infra/authelia/resources
   destination:
     server: https://kubernetes.default.svc
     namespace: authelia
