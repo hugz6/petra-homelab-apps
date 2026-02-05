@@ -25,7 +25,9 @@ grafana:
   enabled: true
   admin:
     existingSecret: "grafana-secrets"
+    userKey: "" # Empty means use the default 'admin' or user field below
     passwordKey: "admin-password"
+    user: "admin"
   persistence:
     enabled: true
     size: 2Gi
@@ -46,13 +48,17 @@ grafana:
       name: "Authentik"
       allow_sign_up: "true"
       client_id: "grafana"
-      client_secret: "$__env{GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}"
       scopes: "openid profile email"
       auth_url: "https://auth.beutra.fr/application/o/authorize/"
       token_url: "https://auth.beutra.fr/application/o/token/"
       api_url: "https://auth.beutra.fr/application/o/userinfo/"
       role_attribute_path: "contains(groups, 'grafana-admins') && 'Admin' || contains(groups, 'grafana-editors') && 'Editor' || 'Viewer'"
-  envFromSecret: "grafana-secrets"
+  extraEnvs:
+    - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: grafana-secrets
+          key: client-secret
 
 vmalert:
   spec:
