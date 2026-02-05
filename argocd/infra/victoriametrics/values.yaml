@@ -29,6 +29,17 @@ grafana:
   persistence:
     enabled: true
     size: 2Gi
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    hosts:
+      - grafana.beutra.fr
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana.beutra.fr
 vmalert:
   spec:
     extraArgs:
