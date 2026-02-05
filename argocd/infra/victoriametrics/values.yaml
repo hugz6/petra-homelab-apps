@@ -16,10 +16,10 @@ vmsingle:
         memory: "512Mi"
     storage:
       accessModes: ["ReadWriteOnce"]
+      storageClassName: "longhorn-single"
       resources:
         requests:
           storage: 10Gi
-        storageClassName: "longhorn-single"
 
 grafana:
   enabled: true
