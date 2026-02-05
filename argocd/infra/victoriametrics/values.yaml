@@ -29,6 +29,10 @@ grafana:
   persistence:
     enabled: true
     size: 2Gi
+vmalert:
+  spec:
+    extraArgs:
+      notifier.blackhole: "true"
 
 alertmanager:
   enabled: false
