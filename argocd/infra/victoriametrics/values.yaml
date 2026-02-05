@@ -1,40 +1,34 @@
 ---
 nameOverride: vkms
 
-grafana:
-  ingress:
-    enabled: false
-  grafana.ini:
-    server:
-      domain: grafana.beutra.fr
-      root_url: "https://%(domain)s/"
-      serve_from_sub_path: true
-    public_dashboards:
-      enabled: true
+vmagent:
+  spec:
+    scrapeInterval: "60s"
+    externalLabels:
+      cluster: "homelab"
 
-defaultDashboards:
-  annotations:
-    argocd.argoproj.io/sync-options: ServerSideApply=true
-    
 vmsingle:
   spec:
-    retentionPeriod: "30d"
+    retentionPeriod: "3d"
+    replicaCount: 1
+    resources:
+      limits:
+        memory: "512Mi"
     storage:
-      accessModes:
-        - ReadWriteOnce
+      accessModes: ["ReadWriteOnce"]
       resources:
         requests:
-          storage: 100Gi
-      storageClassName: longhorn-single
+          storage: 10Gi
+        storageClassName: "longhorn-single"
+
+grafana:
+  enabled: true
+  adminPassword:
+    existingSecret: "grafana-secrets"
+    existingSecretKey: "admin-password"
+  persistence:
+    enabled: true
+    size: 2Gi
 
 alertmanager:
-  spec:
-    storage:
-      volumeClaimTemplate:
-        spec:
-          storageClassName: longhorn-single
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 1Gi
+  enabled: false
