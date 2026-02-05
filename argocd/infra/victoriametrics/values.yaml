@@ -23,9 +23,9 @@ vmsingle:
 
 grafana:
   enabled: true
-  adminPassword:
+  admin:
     existingSecret: "grafana-secrets"
-    existingSecretKey: "admin-password"
+    passwordKey: "admin-password"
   persistence:
     enabled: true
     size: 2Gi
@@ -42,18 +42,17 @@ grafana:
           - grafana.beutra.fr
   grafana.ini:
     auth.generic_oauth:
-      enabled: true
-      name: Authentik
-      allow_sign_up: true
-      client_id: grafana
-      client_secret:
-        existingSecret: grafana-secrets
-        existingSecretKey: "client-secret"
-      scopes: openid profile email
-      auth_url: https://auth.beutra.fr/application/o/authorize/
-      token_url: https://auth.beutra.fr/application/o/token/
-      api_url: https://auth.beutra.fr/application/o/userinfo/
-      role_attribute_path: contains(groups, 'grafana-admins') && 'Admin' || contains(groups, 'grafana-editors') && 'Editor' || 'Viewer'
+      enabled: "true"
+      name: "Authentik"
+      allow_sign_up: "true"
+      client_id: "grafana"
+      client_secret: "$__env{GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}"
+      scopes: "openid profile email"
+      auth_url: "https://auth.beutra.fr/application/o/authorize/"
+      token_url: "https://auth.beutra.fr/application/o/token/"
+      api_url: "https://auth.beutra.fr/application/o/userinfo/"
+      role_attribute_path: "contains(groups, 'grafana-admins') && 'Admin' || contains(groups, 'grafana-editors') && 'Editor' || 'Viewer'"
+  envFromSecret: "grafana-secrets"
 
 vmalert:
   spec:
