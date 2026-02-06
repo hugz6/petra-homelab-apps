@@ -14,8 +14,6 @@ spec:
     repoURL: https://github.com/hugz6/petra-homelab-apps.git
     targetRevision: main
     path: argocd/infra/argocd/resources
-    directory:
-      recurse: false
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
