@@ -1,4 +1,4 @@
-# Forcer les noms pour correspondre à l'installation Kubespray (évite les doublons)
+---
 fullnameOverride: "argocd"
 
 server:
@@ -9,8 +9,7 @@ server:
     ingressClassName: traefik
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    hosts:
-      - argocd.beutra.fr
+    hostname: argocd.beutra.fr
     tls:
       - secretName: argocd-tls
         hosts:
