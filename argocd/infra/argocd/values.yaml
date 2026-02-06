@@ -1,0 +1,33 @@
+# Forcer les noms pour correspondre à l'installation Kubespray (évite les doublons)
+fullnameOverride: "argocd"
+
+server:
+  extraArgs:
+    - --insecure
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    hosts:
+      - argocd.beutra.fr
+    tls:
+      - secretName: argocd-tls
+        hosts:
+          - argocd.beutra.fr
+
+configs:
+  cm:
+    url: https://argocd.beutra.fr
+    oidc.config: |
+      name: Authentik
+      issuer: https://auth.beutra.fr/application/o/argocd/
+      clientID: 7Z5LhurHUxtBnzUpOI9tiTNxpgEDxIfehUYrUxXC
+      clientSecret: $oidc.clientSecret
+      requestedScopes: ["openid", "profile", "email", "groups"]
+      requestedIDTokenClaims: {"groups": {"essential": true}}
+  rbac:
+    policy.csv: |
+      g, devops, role:admin
+  params:
+    server.insecure: "true"

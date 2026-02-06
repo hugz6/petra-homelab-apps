@@ -10,10 +10,16 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   project: default
-  source:
-    repoURL: https://github.com/hugz6/petra-homelab-apps.git
-    targetRevision: main
-    path: argocd/infra/argocd/resources
+  sources:
+    - chart: argo-cd
+      repoURL: https://argoproj.github.io/argo-helm
+      targetRevision: 7.8.2
+      helm:
+        valueFiles:
+          - $values/argocd/infra/argocd/values.yaml
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
