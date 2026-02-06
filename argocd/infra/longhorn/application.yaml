@@ -32,6 +32,9 @@ spec:
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
       path: argocd/infra/longhorn/storage-class/
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      path: argocd/infra/longhorn/resources/
 
   destination:
     server: https://kubernetes.default.svc

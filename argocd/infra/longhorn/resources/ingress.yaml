@@ -1,0 +1,44 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: longhorn-authentik-forwardauth
+  namespace: longhorn-system
+spec:
+  forwardAuth:
+    # Utilisation de l'outpost authentik général s'il existe, ou celui de garlicdoor par défaut
+    address: http://ak-outpost-garlicdoor-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/traefik
+    trustForwardHeader: true
+    authResponseHeaders:
+      - Set-Cookie
+      - X-authentik-username
+      - X-authentik-groups
+      - X-authentik-email
+      - X-authentik-name
+      - X-authentik-uid
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: longhorn-ingress
+  namespace: longhorn-system
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/router.middlewares: longhorn-system-longhorn-authentik-forwardauth@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - longhorn.infra.beutra.fr
+      secretName: longhorn-tls
+  rules:
+    - host: longhorn.infra.beutra.fr
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: longhorn-frontend
+                port:
+                  number: 80
