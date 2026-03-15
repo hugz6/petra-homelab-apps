@@ -6,11 +6,11 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: oci://ghcr.io/hugz6
-      chart: garlicdoor
-      targetRevision: 1.0.0
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      path: helm-charts/garlicdoor
+      targetRevision: main
       helm:
-        releaseName: garlicdoor-portal
+        releaseName: garlicdoor
         valueFiles:
           - $values/argocd/apps/garlicdoor/values.yaml
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git

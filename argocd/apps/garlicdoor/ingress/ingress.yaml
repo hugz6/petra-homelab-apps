@@ -40,6 +40,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: garlicdoor-portal
+            name: garlicdoor
             port:
               number: 80
