@@ -17,6 +17,11 @@
         devShells.default = pkgs.mkShell {
           buildInputs = [
             pkgs.go-task
+	    pkgs.kubectl
+	    pkgs.k9s
+	    pkgs.argocd
+	    pkgs.helm
+	    pkgs.gemini-cli
           ];
 
           shellHook = ''

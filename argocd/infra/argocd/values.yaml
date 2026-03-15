@@ -30,3 +30,6 @@ configs:
       g, devops, role:admin
   params:
     server.insecure: "true"
+
+repoServer:
+  containerPort: 8081
