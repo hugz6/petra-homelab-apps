@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: oci://ghcr.io/hugz6/garlicdoor/garlicdoor
+    - repoURL: oci://ghcr.io/hugz6
       chart: garlicdoor
       targetRevision: 1.0.0
       helm:
@@ -15,8 +15,10 @@ spec:
           - $values/argocd/apps/garlicdoor/values.yaml
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
-      path: argocd/apps/garlicdoor/ingress/
       ref: values
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      path: argocd/apps/garlicdoor/ingress
 
   destination:
     server: https://kubernetes.default.svc

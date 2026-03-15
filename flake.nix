@@ -20,7 +20,7 @@
 	    pkgs.kubectl
 	    pkgs.k9s
 	    pkgs.argocd
-	    pkgs.helm
+	    pkgs.kubernetes-helm
 	    pkgs.gemini-cli
           ];
 
