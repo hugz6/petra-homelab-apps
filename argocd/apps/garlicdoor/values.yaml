@@ -52,7 +52,7 @@ config:
 image:
   repository: ghcr.io/hugz6/garlicdoor
   pullPolicy: IfNotPresent
-  tag: "0.1.0"
+  tag: "sha-f6b2b32"
 
 autoscaling:
   enabled: true

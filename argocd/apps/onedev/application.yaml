@@ -8,15 +8,17 @@ spec:
   sources:
     - repoURL: https://code.onedev.io/onedev/~helm
       chart: onedev
-      targetRevision: 14.0.4
+      targetRevision: 14.1.9
       helm:
         releaseName: onedev
         valueFiles:
           - $values/argocd/apps/onedev/values.yaml
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
-      path: argocd/apps/onedev/resources
       ref: values
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      path: argocd/apps/onedev/resources
   destination:
     server: https://kubernetes.default.svc
     namespace: onedev
