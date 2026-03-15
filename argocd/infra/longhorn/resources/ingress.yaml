@@ -6,7 +6,6 @@ metadata:
   namespace: longhorn-system
 spec:
   forwardAuth:
-    # Utilisation de l'outpost authentik général s'il existe, ou celui de garlicdoor par défaut
     address: http://ak-outpost-garlicdoor-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/traefik
     trustForwardHeader: true
     authResponseHeaders:

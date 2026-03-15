@@ -1,0 +1,37 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: basic-infrastructure-alerts
+  namespace: monitoring
+  labels:
+    role: alert-rules
+spec:
+  groups:
+    - name: general.rules
+      rules:
+        - alert: InstanceDown
+          expr: up == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Instance {{ $labels.instance }} down"
+            description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+
+        - alert: HighCpuUsage
+          expr: sum(rate(node_cpu_seconds_total{mode!="idle"}[5m])) by (instance) / sum(index_stats(node_cpu_seconds_total) by (instance)) * 100 > 80
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High CPU usage on {{ $labels.instance }}"
+            description: "CPU usage is above 80% for more than 10 minutes on {{ $labels.instance }}."
+
+        - alert: LowDiskSpace
+          expr: (node_filesystem_avail_bytes{mountpoint="/"} * 100) / node_filesystem_size_bytes{mountpoint="/"} < 15
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Low disk space on {{ $labels.instance }}"
+            description: "Available disk space on / is below 15% on {{ $labels.instance }}."
