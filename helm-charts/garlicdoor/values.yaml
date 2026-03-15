@@ -45,7 +45,7 @@ volumeMounts:
 volumes:
   - name: config
     configMap:
-      name: garlicdoor-portal-config
+      name: garlicdoor-config
       items:
         - key: .env
           path: .env
