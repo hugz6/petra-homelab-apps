@@ -1,5 +1,6 @@
 ---
 authentik:
+  host: https://auth.beutra.fr
   log_level: info
   
   resources:
