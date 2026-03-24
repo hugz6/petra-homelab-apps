@@ -8,7 +8,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "2" # After MetalLB
 spec:
-  project: default
+  project: infrastructure
   source:
     chart: traefik
     repoURL: https://traefik.github.io/charts

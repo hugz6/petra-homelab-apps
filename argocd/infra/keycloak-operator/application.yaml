@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak-operator
+  namespace: argocd
+spec:
+  project: infrastructure
+  source:
+    repoURL: https://github.com/Hostzero-Gmbh/keycloak-operator.git
+    targetRevision: v0.5.0
+    path: charts/keycloak-operator
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: keycloak-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

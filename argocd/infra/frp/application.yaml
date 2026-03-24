@@ -4,7 +4,7 @@ metadata:
   name: frp-client
   namespace: argocd
 spec:
-  project: default
+  project: infrastructure
   sources:
     - repoURL: ghcr.io/hugz6/frp
       chart: frp

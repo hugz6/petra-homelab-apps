@@ -2,34 +2,39 @@
 fullnameOverride: "argocd"
 
 server:
-  extraArgs:
-    - --insecure
   ingress:
     enabled: true
     ingressClassName: traefik
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
     hostname: argocd.infra.beutra.fr
-    tls:
-      - secretName: argocd-tls
-        hosts:
-          - argocd.infra.beutra.fr
-
+    tls: true
+ 
 configs:
   cm:
     url: https://argocd.infra.beutra.fr
     oidc.config: |
-      name: Authentik
-      issuer: https://auth.beutra.fr/application/o/argocd/
-      clientID: 7Z5LhurHUxtBnzUpOI9tiTNxpgEDxIfehUYrUxXC
-      clientSecret: $oidc.clientSecret
+      name: Keycloak
+      issuer: https://keycloak.beutra.fr/realms/realm-pws
+      clientID: argocd
+      clientSecret: $argocd-keycloak-sso-secret:oidc.keycloak.clientSecret
       requestedScopes: ["openid", "profile", "email", "groups"]
-      requestedIDTokenClaims: {"groups": {"essential": true}}
+      scopes: "[groups]"
+ 
   rbac:
+    policy.default: ""
     policy.csv: |
-      g, devops, role:admin
+      g, admins, role:admin
+      g, admin, role:admin
+ 
+      p, role:dev, applications, *, default/*, allow
+      p, role:dev, applications, *, staging/*, allow
+      p, role:dev, logs,         get, *, allow
+      g, dev, role:dev
+ 
+      p, role:guest, applications, get, default/*, allow
+      p, role:guest, applications, get, staging/*, allow
+      g, guest, role:guest
+ 
   params:
     server.insecure: "true"
-
-repoServer:
-  containerPort: 8081

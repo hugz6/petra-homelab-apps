@@ -1,0 +1,53 @@
+# Définition de l'utilisateur
+apiVersion: keycloak.hostzero.com/v1beta1
+kind: KeycloakUser
+metadata:
+  name: admin-petra
+  namespace: keycloak
+spec:
+  realmRef:
+    name: realm-pws
+  definition:
+    username: petra
+    email: petra@beutra.fr
+    enabled: true
+    groups:
+      - /admin
+  initialPassword:
+    value: "password"
+    temporary: false
+
+---
+# Groupes du Realm (Utilisés par ArgoCD)
+apiVersion: keycloak.hostzero.com/v1beta1
+kind: KeycloakGroup
+metadata:
+  name: group-admin
+  namespace: keycloak
+spec:
+  realmRef:
+    name: realm-pws
+  definition:
+    name: admin
+---
+apiVersion: keycloak.hostzero.com/v1beta1
+kind: KeycloakGroup
+metadata:
+  name: group-dev
+  namespace: keycloak
+spec:
+  realmRef:
+    name: realm-pws
+  definition:
+    name: dev
+---
+apiVersion: keycloak.hostzero.com/v1beta1
+kind: KeycloakGroup
+metadata:
+  name: group-guest
+  namespace: keycloak
+spec:
+  realmRef:
+    name: realm-pws
+  definition:
+    name: guest
