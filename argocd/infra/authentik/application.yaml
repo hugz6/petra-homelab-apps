@@ -4,7 +4,7 @@ metadata:
   name: authentik
   namespace: argocd
 spec:
-  project: default
+  project: infrastructure
   sources:
     - repoURL: https://charts.goauthentik.io
       chart: authentik
@@ -21,6 +21,9 @@ spec:
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
       path: argocd/infra/authentik/postgres
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      path: argocd/infra/authentik/blueprints
   destination:
     server: https://kubernetes.default.svc
     namespace: authentik

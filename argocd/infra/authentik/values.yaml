@@ -1,29 +1,36 @@
 ---
+# -- List of config maps to mount blueprints from.
+# The Helm chart automatically mounts these to /blueprints/mounted/
+# Authentik discovers and applies all .yaml files in /blueprints/
+blueprints:
+  enabled: true
+  use_default: true
+  configMaps:
+    - authentik-blueprints-groups
+    - authentik-blueprints-users
+    - authentik-blueprints-apps
+    - authentik-blueprints-outposts
+
 authentik:
   host: https://auth.beutra.fr
   log_level: info
-  
-  resources:
-    server:
-      requests:
-        memory: 300Mi
-      limits:
-        memory: 600Mi
-    worker:
-      requests:
-        memory: 200Mi
-      limits:
-        memory: 500Mi
 
 serviceAccount:
   create: true
-  name: "authentik"
+  fullnameOverride: "authentik"
 
 server:
   serviceAccountName: "authentik"
+  resources:
+    requests:
+      memory: 300Mi
+    limits:
+      memory: 600Mi
   envFrom:
     - secretRef:
         name: authentik-secrets
+    - secretRef:
+        name: authentik-oidc-argocd
   env:
     - name: AUTHENTIK_POSTGRESQL__HOST
       valueFrom:
@@ -63,9 +70,17 @@ server:
           - auth.beutra.fr
 
 worker:
+  serviceAccountName: "authentik"
+  resources:
+    requests:
+      memory: 400Mi
+    limits:
+      memory: 1Gi
   envFrom:
     - secretRef:
         name: authentik-secrets
+    - secretRef:
+        name: authentik-oidc-argocd
   env:
     - name: AUTHENTIK_POSTGRESQL__HOST
       valueFrom:

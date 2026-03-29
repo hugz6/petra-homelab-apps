@@ -1,17 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: keycloak-operator
+  name: tinyx
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
-  project: infrastructure
-  source:
-    repoURL: https://github.com/Hostzero-Gmbh/keycloak-operator.git
-    targetRevision: v0.5.0
-    path: charts/keycloak-operator
+  project: epita
+  sources:
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      path: argocd/apps/tinyx/deploy
   destination:
     server: https://kubernetes.default.svc
-    namespace: keycloak-system
+    namespace: tinyx
   syncPolicy:
     automated:
       prune: true

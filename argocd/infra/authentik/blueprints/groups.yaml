@@ -1,0 +1,23 @@
+version: 1
+metadata:
+  name: "groups"
+entries:
+  - model: authentik_core.group
+    state: present
+    identifiers:
+      name: "admin"
+    attrs:
+      name: "admin"
+      is_superuser: true
+  - model: authentik_core.group
+    state: present
+    identifiers:
+      name: "dev"
+    attrs:
+      name: "dev"
+  - model: authentik_core.group
+    state: present
+    identifiers:
+      name: "guest"
+    attrs:
+      name: "guest"
