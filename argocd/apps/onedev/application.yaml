@@ -4,7 +4,7 @@ metadata:
   name: onedev
   namespace: argocd
 spec:
-  project: default
+  project: apps
   sources:
     - repoURL: https://code.onedev.io/onedev/~helm
       chart: onedev

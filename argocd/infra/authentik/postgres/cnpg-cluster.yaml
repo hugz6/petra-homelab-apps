@@ -7,8 +7,8 @@ spec:
   instances: 3
   bootstrap:
     initdb:
-      database: authentik-db
-      owner: authentik-root
+      database: authentik
+      owner: authentik
 
   storage:
     size: 1Gi

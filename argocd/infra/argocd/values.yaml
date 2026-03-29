@@ -14,12 +14,11 @@ configs:
   cm:
     url: https://argocd.infra.beutra.fr
     oidc.config: |
-      name: Keycloak
-      issuer: https://keycloak.beutra.fr/realms/realm-pws
+      name: Authentik
+      issuer: https://auth.beutra.fr/application/o/argocd/
       clientID: argocd
-      clientSecret: $argocd-keycloak-sso-secret:oidc.keycloak.clientSecret
+      clientSecret: $argocd-secret:oidc.authentik.clientSecret
       requestedScopes: ["openid", "profile", "email", "groups"]
-      scopes: "[groups]"
  
   rbac:
     policy.default: ""
@@ -27,13 +26,13 @@ configs:
       g, admins, role:admin
       g, admin, role:admin
  
-      p, role:dev, applications, *, default/*, allow
       p, role:dev, applications, *, staging/*, allow
       p, role:dev, logs,         get, *, allow
       g, dev, role:dev
  
-      p, role:guest, applications, get, default/*, allow
-      p, role:guest, applications, get, staging/*, allow
+      p, role:guest, applications, get, epita/*, allow
+      p, role:guest, applications, sync, epita/*, allow
+      p, role:guest, logs,         get, epita/*, allow
       g, guest, role:guest
  
   params:

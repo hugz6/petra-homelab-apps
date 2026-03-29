@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+- name: authentik-blueprints-groups
+  files:
+    - groups.yaml
+- name: authentik-blueprints-users
+  files:
+    - users.yaml
+- name: authentik-blueprints-apps
+  files:
+    - applications.yaml
+- name: authentik-blueprints-outposts
+  files:
+    - outposts.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true

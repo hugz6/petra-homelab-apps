@@ -1,0 +1,27 @@
+version: 1
+metadata:
+  name: "users"
+entries:
+  - model: authentik_core.user
+    state: present
+    identifiers:
+      username: "petra"
+    attrs:
+      username: "petra"
+      name: "Petra Admin"
+      email: "petra@beutra.fr"
+      is_active: true
+      groups:
+        - !Find [authentik_core.group, [name, "admin"]]
+  - model: authentik_core.user
+    state: present
+    identifiers:
+      username: "test-guest"
+    attrs:
+      username: "test-guest"
+      name: "Test Guest"
+      email: "test-guest@beutra.fr"
+      is_active: true
+      groups:
+        - !Find [authentik_core.group, [name, "guest"]]
+

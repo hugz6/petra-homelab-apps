@@ -4,7 +4,7 @@ metadata:
   name: garlicdoor
   namespace: argocd
 spec:
-  project: default
+  project: apps
   sources:
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       path: helm-charts/garlicdoor
