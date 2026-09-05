@@ -60,8 +60,21 @@ serviceAccount:
 
 podAnnotations: {}
 podLabels: {}
-podSecurityContext: {}
-securityContext: {}
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+# NOTE: this image runs as root and reads /root/config.yaml while binding port 80,
+# so runAsNonRoot/readOnlyRootFilesystem are intentionally left off (they would
+# break it). This set is Pod-Security "baseline"-compliant. Ideal follow-up:
+# rebuild the image to run as a non-root UID on a port >1024, then enable
+# runAsNonRoot + readOnlyRootFilesystem and drop NET_BIND_SERVICE.
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+    add:
+      - NET_BIND_SERVICE
 
 service:
   type: ClusterIP

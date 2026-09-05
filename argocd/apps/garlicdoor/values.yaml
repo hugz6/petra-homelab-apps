@@ -4,16 +4,6 @@ config:
   logo: "/static/logo.png"
 
   sections:
-    - title: "Services - DevOps"
-      type: "links"
-      items:
-        - name: "Onedev - Git"
-          url: https://onedev.beutra.fr
-          description: "Access to Onedev DevOps Platform"
-        - name: "Forgejo - Git"
-          url: https://onedev.beutra.fr
-          description: "Access to Forgejo Git Server"
-
     - title: "Services - Monitoring"
       type: "links"
       items:
@@ -32,7 +22,7 @@ config:
       items:
         - name: "MinIO S3"
           url: https://minio.beutra.fr
-          description: "Access to Onedev DevOps Platform"
+          description: "Access to MinIO S3 storage"
 
     - title: "Services - Admin"
       type: "links"
