@@ -9,8 +9,20 @@ metadata:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
   description: Project for cluster-wide infrastructure components
+  # Trusted tier: it installs CRDs, ClusterRoles, StorageClasses, etc. across the
+  # cluster, so cluster/namespace resource scope stays open. Source repos are
+  # pinned to the known chart/config repositories instead of a wildcard.
   sourceRepos:
-    - '*'
+    - 'https://github.com/hugz6/petra-homelab-apps.git'
+    - 'ghcr.io/hugz6/frp'
+    - 'https://argoproj.github.io/argo-helm'
+    - 'https://bitnami-labs.github.io/sealed-secrets'
+    - 'https://charts.goauthentik.io'
+    - 'https://charts.jetstack.io'
+    - 'https://charts.longhorn.io'
+    - 'https://cloudnative-pg.io/charts'
+    - 'https://traefik.github.io/charts'
+    - 'https://victoriametrics.github.io/helm-charts'
   destinations:
     - namespace: '*'
       server: https://kubernetes.default.svc

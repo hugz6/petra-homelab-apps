@@ -31,7 +31,6 @@ configs:
       g, dev, role:dev
  
       p, role:guest, applications, get, epita/*, allow
-      p, role:guest, applications, sync, epita/*, allow
       p, role:guest, logs,         get, epita/*, allow
       g, guest, role:guest
  
