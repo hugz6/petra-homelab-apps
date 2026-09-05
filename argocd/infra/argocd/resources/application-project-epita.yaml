@@ -8,15 +8,18 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
-  description: Project for epita components
+  description: Project for epita components (low-trust; guest role can sync this)
   sourceRepos:
-    - '*'
+    - 'https://github.com/hugz6/petra-homelab-apps.git'
   destinations:
-    - namespace: '*'
+    - namespace: epita
       server: https://kubernetes.default.svc
+    - namespace: argocd
+      server: https://kubernetes.default.svc
+  # Cluster scope limited to Namespace creation only: no ClusterRole/CRD/etc.
   clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
+    - group: ''
+      kind: Namespace
   namespaceResourceWhitelist:
     - group: '*'
       kind: '*'
