@@ -10,9 +10,10 @@ entries:
       name: "homelab-outpost"
       type: "proxy"
       service_connection: null
-      # On peut ajouter ici TOUS les Proxy Providers du homelab
+      # On peut ajouter ici TOUS les Proxy Providers du homelab.
+      # NB: chaque référence doit correspondre à un provider réellement défini
+      # (un !Find non résolu renvoie null et vide toute la liste).
       providers:
-        - !Find [authentik_providers_proxy.proxyprovider, [name, "ArgoCD Proxy Provider"]]
         - !Find [authentik_providers_proxy.proxyprovider, [name, "Garlicdoor Proxy Provider"]]
       config:
         authentik_host: "https://auth.beutra.fr"
