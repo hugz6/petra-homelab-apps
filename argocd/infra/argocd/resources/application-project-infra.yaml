@@ -16,7 +16,7 @@ spec:
     - 'https://github.com/hugz6/petra-homelab-apps.git'
     - 'ghcr.io/hugz6/frp'
     - 'https://argoproj.github.io/argo-helm'
-    - 'https://bitnami-labs.github.io/sealed-secrets'
+    - 'https://bitnami.github.io/sealed-secrets'
     - 'https://charts.goauthentik.io'
     - 'https://charts.jetstack.io'
     - 'https://charts.longhorn.io'
