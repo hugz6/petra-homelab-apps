@@ -4,33 +4,38 @@ config:
   logo: "/static/logo.png"
 
   sections:
-    - title: "Services - Monitoring"
+    - title: "Infrastructure"
       type: "links"
       items:
-        - name: "Openobserve"
-          url: https://openobserve.beutra.fr
-          description: "Access to Openobserve Monitoring"
-        - name: "Prometheus"
-          url: https://prometheus.beutra.fr
-          description: "Access to Prometheus Monitoring"
+        - name: "ArgoCD"
+          url: https://argocd.infra.beutra.fr
+          description: "GitOps deployments"
+        - name: "Longhorn"
+          url: https://longhorn.infra.beutra.fr
+          description: "Cluster storage (admins only)"
+        - name: "Authentik"
+          url: https://auth.beutra.fr
+          description: "SSO and user management"
+
+    - title: "Monitoring"
+      type: "links"
+      items:
         - name: "Grafana"
           url: https://grafana.beutra.fr
-          description: "Access to Grafana Dashboard"
+          description: "Dashboards and metrics"
 
-    - title: "Services - Other"
+    - title: "Proxmox (LAN only)"
       type: "links"
       items:
-        - name: "MinIO S3"
-          url: https://minio.beutra.fr
-          description: "Access to MinIO S3 storage"
-
-    - title: "Services - Admin"
-      type: "links"
-      items:
-        - name: "Authentik - SSO"
-          url: https://auth.beutra.fr
-          description: "Access to Petra-Homelab SSO"
-        
+        - name: "pve-1"
+          url: https://192.168.1.201:8006
+          description: "Hosts k8s-cp-1 and k8s-w-1"
+        - name: "pve-2"
+          url: https://192.168.1.202:8006
+          description: "Hosts k8s-cp-2 and k8s-w-2"
+        - name: "pve-3"
+          url: https://192.168.1.203:8006
+          description: "Hosts k8s-cp-3 and k8s-w-3"
 
     - title: "Shortcuts"
       type: "links"
@@ -38,6 +43,9 @@ config:
         - name: "My GitHub"
           url: https://github.com/hugz6
           description: "Access to my GH"
+        - name: "Homelab repo"
+          url: https://github.com/hugz6/petra-homelab-apps
+          description: "ArgoCD manifests and Helm charts"
 
 image:
   repository: ghcr.io/hugz6/garlicdoor
