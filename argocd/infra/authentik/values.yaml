@@ -31,6 +31,9 @@ server:
         name: authentik-secrets
     - secretRef:
         name: authentik-oidc-argocd
+    - secretRef:
+        name: authentik-oidc-grafana
+        optional: true
   env:
     - name: AUTHENTIK_POSTGRESQL__HOST
       valueFrom:
@@ -81,6 +84,9 @@ worker:
         name: authentik-secrets
     - secretRef:
         name: authentik-oidc-argocd
+    - secretRef:
+        name: authentik-oidc-grafana
+        optional: true
   env:
     - name: AUTHENTIK_POSTGRESQL__HOST
       valueFrom:
