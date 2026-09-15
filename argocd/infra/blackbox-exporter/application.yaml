@@ -28,6 +28,8 @@ spec:
               url: https://argocd.infra.beutra.fr/healthz
             - name: grafana
               url: https://grafana.beutra.fr/api/health
+            - name: longhorn
+              url: https://longhorn.infra.beutra.fr
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
