@@ -11,9 +11,40 @@ kubeProxy:
 kubeEtcd:
   enabled: false
 
-# No receiver configured yet.
 alertmanager:
-  enabled: false
+  alertmanagerSpec:
+    # Mounted at /etc/alertmanager/secrets/<secret>/<key>
+    secrets:
+      - alertmanager-secrets
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      receiver: telegram
+      group_by: [alertname, namespace]
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      routes:
+        # Watchdog, InfoInhibitor and info-level noise.
+        - receiver: "null"
+          matchers:
+            - severity =~ "none|info"
+    inhibit_rules:
+      - source_matchers:
+          - severity = "critical"
+        target_matchers:
+          - severity = "warning"
+        equal: [alertname, namespace]
+    receivers:
+      - name: "null"
+      - name: telegram
+        telegram_configs:
+          - bot_token_file: /etc/alertmanager/secrets/alertmanager-secrets/telegram-bot-token
+            chat_id: 8336629237
+            send_resolved: true
+    templates:
+      - /etc/alertmanager/config/*.tmpl
 
 prometheus:
   prometheusSpec:
