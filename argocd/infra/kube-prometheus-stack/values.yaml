@@ -46,6 +46,13 @@ alertmanager:
     templates:
       - /etc/alertmanager/config/*.tmpl
 
+# Webhook certs from cert-manager instead of the certgen hook Jobs, whose
+# hook-succeeded + ttlSecondsAfterFinished policies leave ArgoCD syncs hanging.
+prometheusOperator:
+  admissionWebhooks:
+    certManager:
+      enabled: true
+
 prometheus:
   prometheusSpec:
     retention: 3d
