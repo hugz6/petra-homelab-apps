@@ -13,6 +13,8 @@ spec:
         parameters:
           - name: installCRDs
             value: "true"
+          - name: prometheus.servicemonitor.enabled
+            value: "true"
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: HEAD
       path: argocd/infra/cert-manager

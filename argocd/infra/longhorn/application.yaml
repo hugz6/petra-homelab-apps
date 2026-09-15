@@ -29,6 +29,9 @@ spec:
           service:
             ui:
               type: ClusterIP
+          metrics:
+            serviceMonitor:
+              enabled: true
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
       path: argocd/infra/longhorn/storage-class/

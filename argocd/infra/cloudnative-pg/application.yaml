@@ -13,6 +13,9 @@ spec:
     targetRevision: 0.27.0
     helm:
       releaseName: cnpg
+      valuesObject:
+        monitoring:
+          podMonitorEnabled: true
 
   destination:
     server: https://kubernetes.default.svc

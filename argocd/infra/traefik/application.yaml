@@ -107,6 +107,10 @@ spec:
             addEntryPointsLabels: true
             addRoutersLabels: true
             addServicesLabels: true
+            service:
+              enabled: true
+            serviceMonitor:
+              enabled: true
         
         # Resources
         resources:

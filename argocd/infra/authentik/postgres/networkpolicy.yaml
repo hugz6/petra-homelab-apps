@@ -28,3 +28,11 @@ spec:
           port: 5432
         - protocol: TCP
           port: 8000
+    # Prometheus scraping the postgres exporter.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - protocol: TCP
+          port: 9187
