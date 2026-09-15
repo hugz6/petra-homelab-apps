@@ -11,5 +11,5 @@ spec:
       owner: authentik
 
   storage:
-    size: 1Gi
+    size: 5Gi
     storageClass: longhorn-single
