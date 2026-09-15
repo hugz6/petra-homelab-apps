@@ -42,9 +42,50 @@ alertmanager:
         telegram_configs:
           - bot_token_file: /etc/alertmanager/secrets/alertmanager-secrets/telegram-bot-token
             chat_id: 8336629237
+            parse_mode: HTML
+            message: '{{ template "telegram.homelab" . }}'
             send_resolved: true
     templates:
       - /etc/alertmanager/config/*.tmpl
+  templateFiles:
+    telegram.tmpl: |-
+      {{/* One alert: summary, description, where, when. Values are HTML-escaped for Telegram. */}}
+      {{ define "telegram.homelab.alert" }}
+      {{- if .Annotations.summary }}<b>{{ .Annotations.summary | html }}</b>{{ else }}<b>{{ .Labels.alertname | html }}</b>{{ end }}
+      {{- with .Annotations.description }}
+      {{ . | html }}{{ end }}
+      {{- with .Labels.namespace }}
+      📦 <code>{{ . | html }}</code>{{ end }}
+      {{- with (or .Labels.pod .Labels.persistentvolumeclaim .Labels.name .Labels.node .Labels.instance) }}
+      🎯 <code>{{ . | html }}</code>{{ end }}
+      🕒 {{ (.StartsAt | tz "Europe/Paris").Format "02/01 15:04" }}
+      {{- if eq .Status "resolved" }} → {{ (.EndsAt | tz "Europe/Paris").Format "15:04" }} ({{ reReplaceAll "([hm])0s$" "$1" (printf "%s" ((.EndsAt.Sub .StartsAt).Round 60000000000)) }}){{ end }}
+      {{- end }}
+
+      {{ define "telegram.homelab.severity" }}
+      {{- if eq . "critical" }}🔴{{ else if eq . "warning" }}🟠{{ else }}🔵{{ end }}
+      {{- end }}
+
+      {{ define "telegram.homelab" }}
+      {{- if .Alerts.Firing }}
+      {{- template "telegram.homelab.severity" .CommonLabels.severity }} <b>{{ .CommonLabels.alertname | html }}</b>
+      {{- if gt (len .Alerts.Firing) 1 }} ×{{ len .Alerts.Firing }}{{ end }}
+      {{- with .CommonLabels.severity }} · <i>{{ . | html }}</i>{{ end }}
+      {{ range $i, $a := .Alerts.Firing }}{{ if lt $i 10 }}
+      {{ template "telegram.homelab.alert" $a }}
+      {{ end }}{{ end }}
+      {{- if gt (len .Alerts.Firing) 10 }}<i>… liste tronquée à 10 alertes</i>
+      {{ end }}
+      {{- end }}
+      {{- if .Alerts.Resolved }}
+      {{- if .Alerts.Firing }}
+      {{ end }}✅ <b>Résolu · {{ .CommonLabels.alertname | html }}</b>
+      {{- if gt (len .Alerts.Resolved) 1 }} ×{{ len .Alerts.Resolved }}{{ end }}
+      {{ range $i, $a := .Alerts.Resolved }}{{ if lt $i 10 }}
+      {{ template "telegram.homelab.alert" $a }}
+      {{ end }}{{ end }}
+      {{- end }}
+      {{- end }}
 
 # Webhook certs from cert-manager instead of the certgen hook Jobs, whose
 # hook-succeeded + ttlSecondsAfterFinished policies leave ArgoCD syncs hanging.
