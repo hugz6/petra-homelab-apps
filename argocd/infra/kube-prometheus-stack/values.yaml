@@ -74,12 +74,12 @@ alertmanager:
       {{ range $i, $a := .Alerts.Firing }}{{ if lt $i 10 }}
       {{ template "telegram.homelab.alert" $a }}
       {{ end }}{{ end }}
-      {{- if gt (len .Alerts.Firing) 10 }}<i>… liste tronquée à 10 alertes</i>
+      {{- if gt (len .Alerts.Firing) 10 }}<i>… showing the first 10 alerts only</i>
       {{ end }}
       {{- end }}
       {{- if .Alerts.Resolved }}
       {{- if .Alerts.Firing }}
-      {{ end }}✅ <b>Résolu · {{ .CommonLabels.alertname | html }}</b>
+      {{ end }}✅ <b>Resolved · {{ .CommonLabels.alertname | html }}</b>
       {{- if gt (len .Alerts.Resolved) 1 }} ×{{ len .Alerts.Resolved }}{{ end }}
       {{ range $i, $a := .Alerts.Resolved }}{{ if lt $i 10 }}
       {{ template "telegram.homelab.alert" $a }}
