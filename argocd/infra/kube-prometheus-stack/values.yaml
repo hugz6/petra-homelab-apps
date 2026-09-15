@@ -1,0 +1,60 @@
+---
+# Kubespray binds controller-manager, scheduler and kube-proxy metrics to
+# 127.0.0.1 and etcd metrics need client certs: scraping them only yields
+# permanent TargetDown alerts.
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false
+
+# No receiver configured yet.
+alertmanager:
+  enabled: false
+
+prometheus:
+  prometheusSpec:
+    retention: 3d
+    retentionSize: 9GB
+    # Pick up ServiceMonitors/PodMonitors/rules from every release, not only this one.
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    resources:
+      requests:
+        memory: 512Mi
+      limits:
+        memory: 1536Mi
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn-single
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+grafana:
+  admin:
+    existingSecret: grafana-secrets
+    userKey: admin-user
+    passwordKey: admin-password
+  persistence:
+    enabled: true
+    storageClassName: longhorn-single
+    size: 2Gi
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    hosts:
+      - grafana.beutra.fr
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana.beutra.fr

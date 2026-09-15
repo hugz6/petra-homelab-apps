@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infrastructure
+  sources:
+    - repoURL: https://prometheus-community.github.io/helm-charts
+      chart: kube-prometheus-stack
+      targetRevision: 91.4.0
+      helm:
+        releaseName: kube-prometheus-stack
+        valueFiles:
+          - $values/argocd/infra/kube-prometheus-stack/values.yaml
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      ref: values
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      path: argocd/infra/kube-prometheus-stack/resources
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    # node-exporter needs hostNetwork/hostPID/hostPath, rejected by kubespray's
+    # cluster-wide "baseline" PodSecurity default.
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: privileged
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true # CRDs exceed the client-side apply annotation limit
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        maxDuration: 3m
