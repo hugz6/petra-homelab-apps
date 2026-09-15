@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: blackbox-exporter
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infrastructure
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: prometheus-blackbox-exporter
+    targetRevision: 11.18.0
+    helm:
+      releaseName: blackbox-exporter
+      valuesObject:
+        # Probes go out through public DNS and FRP, so they test the whole path.
+        serviceMonitor:
+          enabled: true
+          defaults:
+            interval: 60s
+          targets:
+            - name: home
+              url: https://home.beutra.fr
+            - name: auth
+              url: https://auth.beutra.fr/-/health/live/
+            - name: argocd
+              url: https://argocd.infra.beutra.fr/healthz
+            - name: grafana
+              url: https://grafana.beutra.fr/api/health
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        maxDuration: 3m

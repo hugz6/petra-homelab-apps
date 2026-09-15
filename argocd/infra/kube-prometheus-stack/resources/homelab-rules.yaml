@@ -1,0 +1,144 @@
+# Homelab-specific alerts, on top of the chart's default rules.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: homelab
+  namespace: monitoring
+spec:
+  groups:
+    - name: homelab.endpoints
+      rules:
+        # End-to-end check from the cluster through the public DNS, FRP, Traefik and Authentik.
+        - alert: PublicEndpointDown
+          expr: probe_success == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "{{ $labels.instance }} is unreachable"
+            description: "Blackbox probe failing for 5m. Check FRP (frps/frpc), Traefik, the Authentik outpost and the backend."
+
+    - name: homelab.storage
+      rules:
+        - alert: PersistentVolumeUsageHigh
+          expr: kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes < 0.20
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} over 80% full"
+            description: "{{ $value | humanizePercentage }} free. Grow the volume before it fills up."
+        - alert: PersistentVolumeUsageCritical
+          expr: kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes < 0.10
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} over 90% full"
+            description: "{{ $value | humanizePercentage }} free. CNPG refuses to start Postgres on a full volume."
+        - alert: LonghornVolumeDegraded
+          expr: longhorn_volume_robustness == 2
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Longhorn volume {{ $labels.pvc_namespace }}/{{ $labels.pvc }} degraded"
+        - alert: LonghornVolumeFaulted
+          expr: longhorn_volume_robustness == 3
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Longhorn volume {{ $labels.pvc_namespace }}/{{ $labels.pvc }} faulted"
+        - alert: LonghornNodeStorageHigh
+          expr: longhorn_node_storage_usage_bytes / longhorn_node_storage_capacity_bytes > 0.80
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Longhorn disk on {{ $labels.node }} over 80% used"
+
+    - name: homelab.databases
+      rules:
+        - alert: PostgresInstanceDown
+          expr: cnpg_collector_up == 0 or kube_pod_container_status_ready{container="postgres"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Postgres {{ $labels.namespace }}/{{ $labels.pod }} is down"
+            description: "Check `kubectl -n {{ $labels.namespace }} get cluster` (disk space, crash loop)."
+
+    - name: homelab.certificates
+      rules:
+        - alert: CertificateNotReady
+          expr: certmanager_certificate_ready_status{condition="False"} == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Certificate {{ $labels.namespace }}/{{ $labels.name }} not ready"
+        # Let's Encrypt renews 30 days before expiry: under 14 days means renewal is failing.
+        - alert: CertificateExpiringSoon
+          expr: certmanager_certificate_expiration_timestamp_seconds - time() < 14 * 86400
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Certificate {{ $labels.namespace }}/{{ $labels.name }} expires in {{ $value | humanizeDuration }}"
+
+    - name: homelab.gitops
+      rules:
+        - alert: ArgoAppDegraded
+          expr: argocd_app_info{health_status!~"Healthy|Progressing"} == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ArgoCD app {{ $labels.name }} is {{ $labels.health_status }}"
+        - alert: ArgoAppOutOfSync
+          expr: argocd_app_info{sync_status!="Synced"} == 1
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ArgoCD app {{ $labels.name }} is {{ $labels.sync_status }}"
+            description: "Unknown usually means the manifests cannot be generated (chart repo, helm error)."
+
+    - name: homelab.ingress
+      rules:
+        - alert: TraefikRouterHighErrorRate
+          expr: |
+            (
+              sum by (router) (rate(traefik_router_requests_total{code=~"5.."}[5m]))
+              / sum by (router) (rate(traefik_router_requests_total[5m]))
+            ) > 0.25
+            and on (router) sum by (router) (rate(traefik_router_requests_total[5m])) > 0.02
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $labels.router }} returns {{ $value | humanizePercentage }} 5xx"
+
+    - name: homelab.secrets
+      rules:
+        - alert: SealedSecretUnsealFailing
+          expr: increase(sealed_secrets_controller_unseal_errors_total[10m]) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "sealed-secrets cannot unseal some secrets ({{ $labels.reason }})"
+            description: "Check `kubectl get sealedsecrets -A`. Usually a secret sealed with a deleted key."
+
+    - name: homelab.nodes
+      rules:
+        # Faster than KubeNodeNotReady; pve-3 is known to freeze silently.
+        - alert: NodeUnreachable
+          expr: up{job="node-exporter"} == 0
+          for: 3m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Node {{ $labels.instance }} unreachable"
+            description: "node-exporter down for 3m. Check the Proxmox host running this VM."
