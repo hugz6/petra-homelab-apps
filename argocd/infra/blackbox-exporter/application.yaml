@@ -30,6 +30,8 @@ spec:
               url: https://grafana.beutra.fr/api/health
             - name: longhorn
               url: https://longhorn.infra.beutra.fr
+            - name: gitlab
+              url: https://gitlab.beutra.fr/users/sign_in
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
