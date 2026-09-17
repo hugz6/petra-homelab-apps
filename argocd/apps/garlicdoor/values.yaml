@@ -16,6 +16,9 @@ config:
         - name: "Authentik"
           url: https://auth.beutra.fr
           description: "SSO and user management"
+        - name: "GitLab"
+          url: https://gitlab.beutra.fr
+          description: "Self-hosted Git, CI/CD and container registry"
 
     - title: "Monitoring"
       type: "links"
