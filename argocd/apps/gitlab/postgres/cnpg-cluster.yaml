@@ -1,0 +1,26 @@
+# GitLab 19.x / chart 10.x supports PostgreSQL 17 only (min 17, max 17), so the
+# image is pinned instead of following the CNPG operator default (18.x).
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: gitlab-pg
+  namespace: gitlab
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.7-system-trixie
+
+  bootstrap:
+    initdb:
+      database: gitlabhq_production
+      owner: gitlab
+      # GitLab requires these extensions and its own role is not superuser.
+      postInitApplicationSQL:
+        - CREATE EXTENSION IF NOT EXISTS pg_trgm;
+        - CREATE EXTENSION IF NOT EXISTS btree_gist;
+        - CREATE EXTENSION IF NOT EXISTS amcheck;
+
+  storage:
+    size: 20Gi
+    storageClass: longhorn-single

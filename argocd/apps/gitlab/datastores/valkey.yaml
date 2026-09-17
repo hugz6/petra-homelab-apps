@@ -1,0 +1,89 @@
+# Chart 10.x dropped the bundled Redis, so GitLab needs an external instance.
+# Valkey 8 is a supported Redis replacement (min 7.2). Single node: GitLab does
+# not support Redis Cluster, and Sentinel HA is not worth the moving parts here.
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-valkey
+  namespace: gitlab
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  selector:
+    app: gitlab-valkey
+  ports:
+    - name: valkey
+      port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gitlab-valkey
+  namespace: gitlab
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  serviceName: gitlab-valkey
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitlab-valkey
+  template:
+    metadata:
+      labels:
+        app: gitlab-valkey
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: valkey
+          image: valkey/valkey:8.1.10-alpine
+          args:
+            - --requirepass
+            - $(VALKEY_PASSWORD)
+            - --appendonly
+            - "yes"
+            - --maxmemory-policy
+            - noeviction
+          env:
+            - name: VALKEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-valkey
+                  key: password
+          ports:
+            - name: valkey
+              containerPort: 6379
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "valkey-cli -a \"$VALKEY_PASSWORD\" ping"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn-single
+        resources:
+          requests:
+            storage: 8Gi

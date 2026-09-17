@@ -1,0 +1,160 @@
+# Chart 10.x dropped the bundled MinIO, and object storage is mandatory for a
+# Kubernetes GitLab (LFS, artifacts, uploads, packages, registry, backups).
+# Single-node MinIO on one Longhorn volume; durability comes from the default
+# 3-replica Longhorn class, not from MinIO erasure coding.
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-minio
+  namespace: gitlab
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  selector:
+    app: gitlab-minio
+  ports:
+    - name: s3
+      port: 9000
+      targetPort: 9000
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gitlab-minio
+  namespace: gitlab
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  serviceName: gitlab-minio
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitlab-minio
+  template:
+    metadata:
+      labels:
+        app: gitlab-minio
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: minio
+          image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+          args: ["server", "/data", "--address", ":9000"]
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-minio-credentials
+                  key: accesskey
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-minio-credentials
+                  key: secretkey
+            # No operator UI is needed: GitLab is the only client.
+            - name: MINIO_BROWSER
+              value: "off"
+          ports:
+            - name: s3
+              containerPort: 9000
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: 9000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 2Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 100Gi
+---
+# Creates the buckets GitLab expects. Idempotent (`mc mb --ignore-existing`), run
+# as a sync hook so it re-checks on every ArgoCD sync without immutable-Job pain.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitlab-minio-buckets
+  namespace: gitlab
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  backoffLimit: 10
+  template:
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mc
+          image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              mc alias set minio http://gitlab-minio:9000 "$ACCESS_KEY" "$SECRET_KEY"
+              for bucket in git-lfs gitlab-artifacts gitlab-uploads gitlab-packages \
+                            gitlab-terraform-state gitlab-ci-secure-files \
+                            gitlab-dependency-proxy gitlab-registry \
+                            gitlab-backups gitlab-tmp gitlab-runner-cache; do
+                mc mb --ignore-existing "minio/$bucket"
+              done
+          env:
+            - name: ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-minio-credentials
+                  key: accesskey
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-minio-credentials
+                  key: secretkey
+            - name: MC_CONFIG_DIR
+              value: /tmp/mc
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

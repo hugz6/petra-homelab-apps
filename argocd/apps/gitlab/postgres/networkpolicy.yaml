@@ -1,0 +1,34 @@
+# Isolates the GitLab CNPG Postgres cluster (gitlab-pg), same model as
+# authentik-pg: only in-namespace pods, the CNPG operator and Prometheus.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gitlab-pg-isolation
+  namespace: gitlab
+spec:
+  podSelector:
+    matchLabels:
+      cnpg.io/cluster: gitlab-pg
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        # All pods within the gitlab namespace (rails/sidekiq + Postgres replicas).
+        - podSelector: {}
+        # CloudNativePG operator.
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: cnpg-system
+      ports:
+        - protocol: TCP
+          port: 5432
+        - protocol: TCP
+          port: 8000
+    # Prometheus scraping the postgres exporter.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - protocol: TCP
+          port: 9187

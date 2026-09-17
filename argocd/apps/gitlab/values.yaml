@@ -1,0 +1,169 @@
+---
+global:
+  edition: ce
+
+  hosts:
+    domain: beutra.fr
+    https: true
+    gitlab:
+      name: gitlab.beutra.fr
+    registry:
+      name: registry.beutra.fr
+
+  # Chart 10 defaults to Gateway API + a bundled Envoy Gateway. The cluster
+  # already routes everything through Traefik, so use plain Ingress objects.
+  gatewayApi:
+    enabled: false
+    installEnvoy: false
+    configureCertmanager: false
+
+  ingress:
+    enabled: true
+    class: traefik
+    provider: traefik
+    # cert-manager is installed cluster-wide; only the issuer annotation is needed.
+    configureCertmanager: false
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    tls:
+      enabled: true
+
+  # kube-prometheus-stack picks up ServiceMonitors from every namespace.
+  monitoring:
+    enabled: true
+
+  # External Postgres: CNPG cluster in argocd/apps/gitlab/postgres.
+  psql:
+    host: gitlab-pg-rw.gitlab.svc.cluster.local
+    port: 5432
+    database: gitlabhq_production
+    username: gitlab
+    password:
+      secret: gitlab-pg-app
+      key: password
+
+  # External Redis: Valkey StatefulSet in argocd/apps/gitlab/datastores.
+  redis:
+    host: gitlab-valkey.gitlab.svc.cluster.local
+    port: 6379
+    auth:
+      enabled: true
+      secret: gitlab-valkey
+      key: password
+
+  registry:
+    bucket: gitlab-registry
+
+  # No GitLab Agent server: no cluster is managed from this instance yet, and it
+  # would need another public hostname (kas.beutra.fr).
+  kas:
+    enabled: false
+
+  appConfig:
+    # Consolidated object storage: one connection for every bucket below.
+    object_store:
+      enabled: true
+      proxy_download: true
+      connection:
+        secret: gitlab-object-storage
+        key: connection
+    terraformState:
+      enabled: true
+    ciSecureFiles:
+      enabled: true
+    dependencyProxy:
+      enabled: true
+    backups:
+      bucket: gitlab-backups
+      tmpBucket: gitlab-tmp
+
+    omniauth:
+      enabled: true
+      allowSingleSignOn: ["openid_connect"]
+      blockAutoCreatedUsers: false
+      syncProfileFromProvider: ["openid_connect"]
+      syncProfileAttributes: ["email"]
+      providers:
+        - secret: gitlab-oidc-authentik
+          key: provider
+
+# Cluster-provided components: do not let the chart install its own copies.
+installCertmanager: false
+nginx-ingress:
+  enabled: false
+prometheus:
+  install: false
+# The runner lives in its own ArgoCD application (needs a token from a running
+# GitLab instance): argocd/apps/gitlab-runner.
+gitlab-runner:
+  install: false
+
+gitlab:
+  # Git over SSH is not reachable: the frp tunnel only forwards 80/443, so the
+  # shell chart (and its Traefik TCP route) is dropped. Clone over HTTPS.
+  gitlab-shell:
+    enabled: false
+
+  webservice:
+    minReplicas: 1
+    maxReplicas: 2
+    # One certificate per host: sharing a single TLS secret across Ingresses
+    # makes cert-manager fight over it.
+    ingress:
+      tls:
+        secretName: gitlab-tls
+    metrics:
+      serviceMonitor:
+        enabled: true
+    resources:
+      requests:
+        cpu: 300m
+        memory: 2.5Gi
+      limits:
+        memory: 4Gi
+  sidekiq:
+    minReplicas: 1
+    maxReplicas: 2
+    metrics:
+      podMonitor:
+        enabled: true
+    resources:
+      requests:
+        cpu: 200m
+        memory: 1Gi
+      limits:
+        memory: 2Gi
+  gitaly:
+    persistence:
+      size: 50Gi
+      storageClass: longhorn
+    metrics:
+      serviceMonitor:
+        enabled: true
+
+  gitlab-exporter:
+    metrics:
+      serviceMonitor:
+        enabled: true
+  toolbox:
+    backups:
+      objectStorage:
+        backend: s3
+        config:
+          secret: gitlab-s3cmd-config
+          key: config
+
+registry:
+  hpa:
+    minReplicas: 1
+    maxReplicas: 2
+  ingress:
+    tls:
+      secretName: gitlab-registry-tls
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  storage:
+    secret: gitlab-registry-storage
+    key: config
