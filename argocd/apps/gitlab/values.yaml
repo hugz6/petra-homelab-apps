@@ -87,6 +87,13 @@ global:
         - secret: gitlab-oidc-authentik
           key: provider
 
+# The chart's upgrade-check is a Helm pre-upgrade hook: Helm skips it on install,
+# but ArgoCD runs it as a PreSync on every sync, including the first one where
+# the chart-info ConfigMap it reads does not exist yet, which deadlocks the
+# bootstrap. Chart version bumps here are explicit and reviewed instead.
+upgradeCheck:
+  enabled: false
+
 # Cluster-provided components: do not let the chart install its own copies.
 installCertmanager: false
 nginx-ingress:
