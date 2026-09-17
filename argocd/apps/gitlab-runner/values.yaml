@@ -1,0 +1,55 @@
+---
+# Runner authentication token comes from a runner created in the GitLab UI
+# (Admin > CI/CD > Runners); registration tokens are gone since GitLab 18.
+# See argocd/apps/gitlab-runner/secrets/README.md.
+gitlabUrl: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/
+runners:
+  secret: gitlab-runner-token
+  cache:
+    secretName: gitlab-runner-cache-credentials
+  config: |
+    concurrent = 4
+    [[runners]]
+      name = "homelab-k8s"
+      executor = "kubernetes"
+      [runners.kubernetes]
+        namespace = "{{.Release.Namespace}}"
+        image = "alpine:3.22"
+        cpu_request = "200m"
+        memory_request = "512Mi"
+        memory_limit = "4Gi"
+        helper_memory_limit = "512Mi"
+      [runners.cache]
+        Type = "s3"
+        Path = "runner"
+        Shared = true
+        [runners.cache.s3]
+          ServerAddress = "gitlab-minio.gitlab.svc.cluster.local:9000"
+          BucketName = "gitlab-runner-cache"
+          BucketLocation = "us-east-1"
+          Insecure = true
+
+rbac:
+  create: true
+  rules:
+    - apiGroups: [""]
+      resources: ["pods", "pods/exec", "pods/attach", "secrets", "configmaps", "services"]
+      verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+    - apiGroups: [""]
+      resources: ["pods/log"]
+      verbs: ["get", "list"]
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
+
+# The ServiceMonitor needs the runner Service to exist.
+service:
+  enabled: true
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true

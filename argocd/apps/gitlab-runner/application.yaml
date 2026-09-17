@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitlab-runner
+  namespace: argocd
+spec:
+  project: apps
+  sources:
+    - repoURL: https://charts.gitlab.io/
+      chart: gitlab-runner
+      targetRevision: 0.92.1
+      helm:
+        releaseName: gitlab-runner
+        valueFiles:
+          - $values/argocd/apps/gitlab-runner/values.yaml
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      ref: values
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      path: argocd/apps/gitlab-runner/secrets
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gitlab-runner
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
