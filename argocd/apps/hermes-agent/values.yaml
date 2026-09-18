@@ -11,6 +11,14 @@ env: {}
 extraEnvFrom:
   - secretRef:
       name: hermes-agent-provider
+  - secretRef:
+      name: hermes-agent-telegram
+
+extraEnv:
+  - name: TELEGRAM_HOME_CHANNEL
+    value: "8336629237"
+  - name: TELEGRAM_ALLOWED_USERS
+    value: "8336629237"
 
 persistence:
   enabled: true
