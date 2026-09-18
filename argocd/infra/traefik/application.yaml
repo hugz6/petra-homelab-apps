@@ -55,6 +55,14 @@ spec:
             protocol: TCP
             redirectTo:
               port: websecure
+            # Traffic reaches Traefik through the frp client, so the real client
+            # IP only survives in the PROXY protocol header it prepends.
+            proxyProtocol:
+              trustedIPs:
+                - 10.233.64.0/18
+            forwardedHeaders:
+              trustedIPs:
+                - 10.233.64.0/18
           websecure:
             port: 8443
             expose:
@@ -63,6 +71,12 @@ spec:
             protocol: TCP
             tls:
               enabled: true
+            proxyProtocol:
+              trustedIPs:
+                - 10.233.64.0/18
+            forwardedHeaders:
+              trustedIPs:
+                - 10.233.64.0/18
           metrics:
             port: 9100
             expose:
@@ -132,6 +146,44 @@ spec:
 
         podSecurityContext:
           fsGroup: 65532
+
+        # The PROXY protocol trust above covers the whole pod CIDR, so restrict
+        # who can open the entrypoints to the frp client alone.
+        extraObjects:
+          - apiVersion: networking.k8s.io/v1
+            kind: NetworkPolicy
+            metadata:
+              name: traefik-ingress-sources
+            spec:
+              podSelector:
+                matchLabels:
+                  app.kubernetes.io/name: traefik
+              policyTypes:
+                - Ingress
+              ingress:
+                - from:
+                    - namespaceSelector:
+                        matchLabels:
+                          kubernetes.io/metadata.name: frp
+                  ports:
+                    - port: 8000
+                      protocol: TCP
+                    - port: 8443
+                      protocol: TCP
+                - from:
+                    - namespaceSelector:
+                        matchLabels:
+                          kubernetes.io/metadata.name: monitoring
+                  ports:
+                    - port: 9100
+                      protocol: TCP
+                # kubelet probes /ping from the node the pod runs on.
+                - from:
+                    - ipBlock:
+                        cidr: 192.168.1.0/24
+                  ports:
+                    - port: 9000
+                      protocol: TCP
   
   destination:
     server: https://kubernetes.default.svc
