@@ -19,6 +19,9 @@ spec:
     - repoURL: https://github.com/hugz6/petra-homelab-apps.git
       targetRevision: main
       path: argocd/apps/hermes-agent/secrets
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      path: argocd/apps/hermes-agent/ingress
 
   destination:
     server: https://kubernetes.default.svc
