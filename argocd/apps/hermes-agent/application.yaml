@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hermes-agent
+  namespace: argocd
+spec:
+  project: apps
+  sources:
+    - repoURL: https://jyje.github.io/hermes-agent-helm
+      chart: hermes-agent
+      targetRevision: 1.15.0
+      helm:
+        releaseName: hermes-agent
+        valueFiles:
+          - $values/argocd/apps/hermes-agent/values.yaml
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      ref: values
+    - repoURL: https://github.com/hugz6/petra-homelab-apps.git
+      targetRevision: main
+      path: argocd/apps/hermes-agent/secrets
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: hermes-agent
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

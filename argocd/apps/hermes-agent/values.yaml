@@ -1,0 +1,25 @@
+config:
+  model:
+    provider: nvidia
+    default: nvidia/nemotron-3-nano-omni-30b-a3b-reasoning
+  terminal:
+    backend: local
+  agent:
+    gateway_timeout: 1800
+
+env: {}
+extraEnvFrom:
+  - secretRef:
+      name: hermes-agent-provider
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 10Gi
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    memory: 2Gi
