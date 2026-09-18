@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: ghcr.io/hugz6/frp
       chart: frp
-      targetRevision: 0.1.2
+      targetRevision: 0.1.3
       helm:
         releaseName: frp-client
         valueFiles:
