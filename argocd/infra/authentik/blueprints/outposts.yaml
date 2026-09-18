@@ -10,9 +10,9 @@ entries:
       name: "homelab-outpost"
       type: "proxy"
       service_connection: null
-      # On peut ajouter ici TOUS les Proxy Providers du homelab.
-      # NB: chaque référence doit correspondre à un provider réellement défini
-      # (un !Find non résolu renvoie null et vide toute la liste).
+      # Every homelab proxy provider can be listed here.
+      # Each reference must match a provider that actually exists:
+      # an unresolved !Find returns null and empties the whole list.
       providers:
         - !Find [authentik_providers_proxy.proxyprovider, [name, "Garlicdoor Proxy Provider"]]
         - !Find [authentik_providers_proxy.proxyprovider, [name, "Longhorn Proxy Provider"]]

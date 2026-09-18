@@ -2,7 +2,7 @@ version: 1
 metadata:
   name: "applications"
 entries:
-  # Mappage de scope 'groups'
+  # 'groups' scope mapping
   - model: authentik_providers_oauth2.scopemapping
     state: present
     identifiers:
@@ -16,7 +16,7 @@ entries:
             "groups": [group.name for group in request.user.groups.all()],
         }
 
-  # Provider OIDC (OAuth2) pour ArgoCD
+  # OIDC (OAuth2) provider for ArgoCD
   - model: authentik_providers_oauth2.oauth2provider
     state: present
     identifiers:
@@ -38,7 +38,7 @@ entries:
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, email]]
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, groups]]
 
-  # Application ArgoCD
+  # ArgoCD application
   - model: authentik_core.application
     state: present
     identifiers:
@@ -49,7 +49,7 @@ entries:
       provider: !Find [authentik_providers_oauth2.oauth2provider, [name, "ArgoCD Provider"]]
       group: "Infrastructure"
 
-  # Provider OIDC (OAuth2) pour Grafana
+  # OIDC (OAuth2) provider for Grafana
   - model: authentik_providers_oauth2.oauth2provider
     state: present
     identifiers:
@@ -71,7 +71,7 @@ entries:
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, email]]
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, groups]]
 
-  # Application Grafana
+  # Grafana application
   - model: authentik_core.application
     state: present
     identifiers:
@@ -82,7 +82,7 @@ entries:
       provider: !Find [authentik_providers_oauth2.oauth2provider, [name, "Grafana Provider"]]
       group: "Infrastructure"
 
-  # Proxy Provider (forward auth) pour Garlicdoor
+  # Proxy provider (forward auth) for Garlicdoor
   - model: authentik_providers_proxy.proxyprovider
     state: present
     identifiers:
@@ -94,7 +94,7 @@ entries:
       external_host: "https://home.beutra.fr"
       mode: "forward_single"
 
-  # Application Garlicdoor
+  # Garlicdoor application
   - model: authentik_core.application
     state: present
     identifiers:
@@ -105,7 +105,7 @@ entries:
       provider: !Find [authentik_providers_proxy.proxyprovider, [name, "Garlicdoor Proxy Provider"]]
       group: "Applications"
 
-  # Proxy Provider (forward auth) pour Longhorn
+  # Proxy provider (forward auth) for Longhorn
   - model: authentik_providers_proxy.proxyprovider
     state: present
     identifiers:
@@ -117,7 +117,7 @@ entries:
       external_host: "https://longhorn.infra.beutra.fr"
       mode: "forward_single"
 
-  # Application Longhorn
+  # Longhorn application
   - model: authentik_core.application
     state: present
     identifiers:
@@ -137,7 +137,7 @@ entries:
     attrs:
       order: 0
 
-  # Provider OIDC (OAuth2) pour GitLab
+  # OIDC (OAuth2) provider for GitLab
   - model: authentik_providers_oauth2.oauth2provider
     state: present
     identifiers:
@@ -159,7 +159,7 @@ entries:
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, email]]
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, groups]]
 
-  # Application GitLab
+  # GitLab application
   - model: authentik_core.application
     state: present
     identifiers:
