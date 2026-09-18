@@ -122,6 +122,9 @@ frpc:
     # Uses vhostHTTPPort (80) configured on FRP server
     - name: "http-ingress"
       type: "http"
+      # Traefik terminates TLS, so the client IP only reaches it through the
+      # PROXY protocol header frpc prepends to the local connection.
+      proxyProtocolVersion: "v2"
       localIP: "traefik.traefik.svc.cluster.local"
       localPort: 80
       customDomains:
@@ -131,6 +134,7 @@ frpc:
     # Uses vhostHTTPSPort (443) configured on FRP server
     - name: "https-ingress"
       type: "https"
+      proxyProtocolVersion: "v2"
       localIP: "traefik.traefik.svc.cluster.local"
       localPort: 443
       customDomains:
