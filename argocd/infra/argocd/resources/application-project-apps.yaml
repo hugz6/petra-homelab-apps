@@ -12,6 +12,7 @@ spec:
   sourceRepos:
     - 'https://github.com/hugz6/petra-homelab-apps.git'
     - 'https://charts.gitlab.io/'
+    - 'https://jyje.github.io/hermes-agent-helm'
   destinations:
     # argocd: app-of-apps + Application CRs. Other entries: the apps themselves.
     - namespace: argocd
@@ -21,6 +22,8 @@ spec:
     - namespace: gitlab
       server: https://kubernetes.default.svc
     - namespace: gitlab-runner
+      server: https://kubernetes.default.svc
+    - namespace: hermes-agent
       server: https://kubernetes.default.svc
   # Apps may only create their own namespace at the cluster scope. This blocks
   # ClusterRole/ClusterRoleBinding/CRD creation, preventing cluster-admin escalation.
