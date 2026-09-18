@@ -181,6 +181,10 @@ entries:
       invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
       external_host: "https://dashboard.hermes.beutra.fr"
       mode: "forward_single"
+      # The dashboard has its own basic auth, so the browser sends an
+      # Authorization header the outpost would otherwise try to validate
+      # itself, ignoring the session cookie and redirecting every request.
+      intercept_header_auth: false
 
   # Hermes application
   - model: authentik_core.application
