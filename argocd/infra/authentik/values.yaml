@@ -23,9 +23,9 @@ server:
   serviceAccountName: "authentik"
   resources:
     requests:
-      memory: 300Mi
+      memory: 512Mi
     limits:
-      memory: 600Mi
+      memory: 1Gi
   envFrom:
     - secretRef:
         name: authentik-secrets
