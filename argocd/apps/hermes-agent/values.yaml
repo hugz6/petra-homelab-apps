@@ -41,6 +41,10 @@ extraEnv:
     value: "8336629237"
   - name: TELEGRAM_ALLOWED_USERS
     value: "8336629237"
+  # $HOME defaults to /root, which is unwritable once the root filesystem is
+  # read-only: point it at the persistent volume.
+  - name: HOME
+    value: "/opt/data"
   # Starts the dashboard s6 service, which stays down otherwise.
   - name: HERMES_DASHBOARD
     value: "1"
@@ -60,5 +64,63 @@ resources:
   requests:
     cpu: 200m
     memory: 512Mi
+    # Caps the writable container layer: without it the agent can fill the
+    # node disk (695G free on k8s-w-2) and evict every pod on it.
+    ephemeral-storage: 1Gi
   limits:
     memory: 2Gi
+    ephemeral-storage: 4Gi
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10000
+  runAsGroup: 10000
+  # Longhorn honours fsGroup, which regrants access to the existing PVC
+  # contents after the switch away from uid 0.
+  fsGroup: 10000
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+# Writable scratch for a read-only root filesystem.
+extraVolumes:
+  - name: run-tmpfs
+    emptyDir:
+      medium: Memory
+      sizeLimit: 16Mi
+  - name: tmp-tmpfs
+    emptyDir:
+      medium: Memory
+      sizeLimit: 64Mi
+
+extraVolumeMounts:
+  - name: run-tmpfs
+    mountPath: /run
+  - name: tmp-tmpfs
+    mountPath: /tmp
+
+networkPolicy:
+  enabled: true
+  # Egress only. Ingress is covered by the namespace policies in ingress/:
+  # policies are additive, so the empty ingress list here denies nothing that
+  # allow-traefik-to-hermes-agent already permits.
+  allowDns: true
+  # No RFC1918 and no metadata endpoint: the agent has no business reaching
+  # Longhorn, the CNPG clusters or the API server.
+  blockPrivateEgress: true
+  extraEgress:
+    # kubespray resolves through nodelocaldns on a link-local address, which
+    # blockPrivateEgress would otherwise drop along with the metadata range.
+    - to:
+        - ipBlock:
+            cidr: 169.254.25.10/32
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
