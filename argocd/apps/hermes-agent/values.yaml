@@ -1,6 +1,17 @@
 config:
+  # OpenRouter registered as a custom OpenAI-compatible provider rather than
+  # the built-in `openrouter` key: only a custom provider accepts extra_headers,
+  # and x-session-id is what pins sticky routing from the first request instead
+  # of waiting for a cache hit to be observed.
+  providers:
+    openrouter-sticky:
+      base_url: https://openrouter.ai/api/v1
+      key_env: OPENROUTER_API_KEY
+      discover_models: true
+      extra_headers:
+        x-session-id: "hermes-agent-homelab"
   model:
-    provider: openrouter
+    provider: openrouter-sticky
     default: z-ai/glm-5.3-flash:floor   # :floor = cheapest endpoint among the providers the account privacy filter allows
   terminal:
     backend: local
