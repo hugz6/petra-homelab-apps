@@ -56,6 +56,21 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
+  name: authentik-original-uri
+  namespace: hermes-agent
+spec:
+  headers:
+    customRequestHeaders:
+      # The outpost's nginx endpoint resolves the application from
+      # X-Forwarded-Host, which Traefik sends, but answers 500 without
+      # X-Original-URI, which it does not. The value only feeds the redirect
+      # URL this mode never emits, so a static prefix is enough.
+      X-Original-URI: "/api"
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
   name: authentik-forwardauth-api
   namespace: hermes-agent
 spec:
@@ -82,7 +97,7 @@ metadata:
   annotations:
     # No cluster-issuer here: the certificate is owned by hermes-agent-ingress,
     # this router only reuses the secret it produces.
-    traefik.ingress.kubernetes.io/router.middlewares: "hermes-agent-authentik-forwardauth-api@kubernetescrd"
+    traefik.ingress.kubernetes.io/router.middlewares: "hermes-agent-authentik-original-uri@kubernetescrd,hermes-agent-authentik-forwardauth-api@kubernetescrd"
 spec:
   ingressClassName: traefik
 
