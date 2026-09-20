@@ -58,17 +58,17 @@ service:
 persistence:
   enabled: true
   storageClass: longhorn
-  size: 10Gi
+  size: 64Gi
 
 resources:
   requests:
     cpu: 200m
-    memory: 512Mi
+    memory: 1Gi
     # Caps the writable container layer: without it the agent can fill the
     # node disk (695G free on k8s-w-2) and evict every pod on it.
     ephemeral-storage: 1Gi
   limits:
-    memory: 2Gi
+    memory: 6Gi
     ephemeral-storage: 4Gi
 
 podSecurityContext:
