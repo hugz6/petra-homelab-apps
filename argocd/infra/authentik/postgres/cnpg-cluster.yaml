@@ -10,6 +10,12 @@ spec:
       database: authentik
       owner: authentik
 
+  postgresql:
+    parameters:
+      # A lost replica's slot otherwise retains WAL until the disk fills and
+      # every instance refuses to start; past this cap the replica re-clones.
+      max_slot_wal_keep_size: "2GB"
+
   storage:
-    size: 5Gi
+    size: 10Gi
     storageClass: longhorn-single
