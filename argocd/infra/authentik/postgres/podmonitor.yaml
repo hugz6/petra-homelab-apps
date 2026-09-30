@@ -1,8 +1,10 @@
 # Manual PodMonitor: Cluster.spec.monitoring.enablePodMonitor is deprecated in CNPG 1.28.
+# Name must differ from the Cluster: CNPG deletes a PodMonitor named after it
+# while enablePodMonitor is off.
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: authentik-pg
+  name: authentik-pg-metrics
   namespace: authentik
 spec:
   selector:
